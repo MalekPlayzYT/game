@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Update Log</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables for Light Mode */
+    :root {
+      --primary-color: #007bff;
+      --primary-color-dark: #0056b3;
+      --background-color: #f5f7fa;
+      --card-background: #fff;
+      --text-color: #333;
+      --border-color: #e0e0e0;
+      --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    /* Dark Mode Overrides */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary-color: #1e90ff;
+        --primary-color-dark: #1c86ee;
+        --background-color: #121212;
+        --card-background: #1e1e1e;
+        --text-color: #e0e0e0;
+        --border-color: #333;
+        --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      }
+    }
+    
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      padding: 20px;
+      transition: var(--transition);
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      letter-spacing: 0.05em;
+      color: var(--text-color);
+    }
+    
+    /* Update List Styles */
+    .update-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      list-style: none;
+    }
+    .update-item {
+      background: var(--card-background);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+    .update-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    .update-image {
+      position: relative;
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+    }
+    /* Fade effect on image bottom */
+    .update-image::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+    }
+    .update-title {
+      padding: 15px;
+      font-size: 1.3rem;
+      text-align: center;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    /* Update Detail Styles */
+    #updateDetailSection {
+      display: none;
+      margin-top: 30px;
+    }
+    .back-button {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: var(--transition);
+      margin-bottom: 20px;
+    }
+    .back-button:hover {
+      background: var(--primary-color-dark);
+    }
+    .update-detail {
+      background: var(--card-background);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+    }
+    .update-detail-image {
+      width: 100%;
+      max-height: 350px;
+      object-fit: cover;
+      display: block;
+    }
+    .detail-text {
+      padding: 20px;
+    }
+    .detail-text h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+    .detail-text h3 {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .detail-text p {
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    .detail-text ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+    .detail-text ul li {
+      margin-bottom: 8px;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+      .update-image {
+        height: 150px;
+      }
+      .update-title {
+        font-size: 1.1rem;
+      }
+      .detail-text h2 {
+        font-size: 1.8rem;
+      }
+      .back-button {
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Game Update Log</h1>
+    <!-- Update List Section -->
+    <div id="updateListSection">
+      <ul class="update-list" id="updateList">
+        <!-- Update cards will be injected dynamically -->
+      </ul>
+    </div>
+    <!-- Update Detail Section -->
+    <div id="updateDetailSection">
+      <button class="back-button" onclick="goBack()">← Back</button>
+      <div id="updateContent" class="update-detail">
+        <!-- Update detail content will be injected dynamically -->
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Update data with multiple "content" fields in a single section.
+    const updates = {
+      update1: {
+        title: 'Version 1 - Game Lunch',
+        sections: [
+          {
+            header: "New Guns/Items:",
+            content: "Combat AR",
+            content2: "Nemesis AR",
+            content3: "Charge Shotgun",
+            content4: "Pump Shotgun",
+            content5: "Rail Gun",
+            content6: "Twin Mag SMG",
+            content7: "Big Pot",
+            content8: "Mini's",
+            content9: "Flowbary",
+            content10: "Flowbary Fizz",
+            content11: "Blade",
+            content12: "Lunch Pad",
+            content13: "Rift",
+            content14: "Shockwave"
+          },
+          {
+            header: "New POI's:",
+            content: "Slapy Gas",
+            content2: "Broken Hotel",
+            content3: "Mini Corol Castle",
+            content4: "Tilted Clock",
+            content5: "Jungle Base",
+            content6: "Ruined Reals",
+            content7: "Castle X",
+          },
+          {
+            header: "New Bosses:",
+            content: "Gohst Boss: Mythic Charge Shotgun - Mythic Nemesis AR"
+          }
+        ],
+        image: 'm.png'
+      }
+    };
+
+    // Dynamically generate update list items.
+    const updateList = document.getElementById('updateList');
+    for (const key in updates) {
+      if (updates.hasOwnProperty(key)) {
+        const update = updates[key];
+        const li = document.createElement('li');
+        li.className = 'update-item';
+        li.onclick = () => showUpdate(key);
+        
+        const imgDiv = document.createElement('div');
+        imgDiv.className = 'update-image';
+        imgDiv.style.backgroundImage = `url('${update.image}')`;
+        
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'update-title';
+        titleDiv.textContent = update.title;
+        
+        li.appendChild(imgDiv);
+        li.appendChild(titleDiv);
+        updateList.appendChild(li);
+      }
+    }
+    
+    // Show update detail and hide the list view.
+    function showUpdate(updateId) {
+      const update = updates[updateId];
+      let html = `
+        <img class="update-detail-image" src="${update.image}" alt="${update.title}">
+        <div class="detail-text">
+          <h2>${update.title}</h2>
+      `;
+      update.sections.forEach(section => {
+        html += `<h3>${section.header}</h3>`;
+        // Collect all keys that start with "content"
+        const contentKeys = Object.keys(section).filter(key => key.startsWith("content") && section[key]);
+        if (contentKeys.length > 1) {
+          html += '<ul>';
+          contentKeys.forEach(key => {
+            html += `<li>${section[key]}</li>`;
+          });
+          html += '</ul>';
+        } else if (contentKeys.length === 1) {
+          html += `<p>${section[contentKeys[0]]}</p>`;
+        }
+      });
+      html += `</div>`;
+      document.getElementById('updateContent').innerHTML = html;
+      document.getElementById('updateListSection').style.display = 'none';
+      document.getElementById('updateDetailSection').style.display = 'block';
+    }
+    
+    // Return to the update list view.
+    function goBack() {
+      document.getElementById('updateDetailSection').style.display = 'none';
+      document.getElementById('updateListSection').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
