@@ -54,12 +54,33 @@
       color: var(--text-color);
     }
     
+    /* Navigation Buttons */
+    .nav-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav-button {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 0 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    .nav-button:hover {
+      background: var(--primary-color-dark);
+    }
+    
     /* Update List Styles */
     .update-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       list-style: none;
+      padding: 0;
     }
     .update-item {
       background: var(--card-background);
@@ -69,6 +90,7 @@
       cursor: pointer;
       box-shadow: var(--box-shadow);
       transition: var(--transition);
+      position: relative;
     }
     .update-item:hover {
       transform: translateY(-4px);
@@ -98,8 +120,10 @@
       transition: var(--transition);
     }
     
-    /* Update Detail Styles */
-    #updateDetailSection {
+    /* Detail Sections */
+    #updateDetailSection,
+    #leaderboardDetailSection,
+    #upcomingDetailSection {
       display: none;
       margin-top: 30px;
     }
@@ -156,6 +180,86 @@
       margin-bottom: 8px;
     }
     
+    /* Leaderboard Styles */
+    .leaderboard-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .leaderboard-item:hover {
+      background: var(--card-background);
+    }
+    .leaderboard-placement {
+      display: inline-block;
+      width: 50px;
+      text-align: center;
+      margin-right: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .leaderboard-pfp {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 15px;
+      object-fit: cover;
+    }
+    /* Podium styles for top 3 placements */
+    .placement-first {
+      color: gold;
+    }
+    .placement-second {
+      color: silver;
+    }
+    .placement-third {
+      color: #cd7f32;
+    }
+    
+    /* Upcoming Styles (similar to updates) */
+    .upcoming-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .upcoming-item {
+      background: var(--card-background);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+    .upcoming-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    /* Cleaner Timer Styling */
+    .upcoming-timer {
+      display: block;
+      margin: 15px auto;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      font-weight: 500;
+      text-align: center;
+      width: fit-content;
+    }
+    
     /* Responsive Adjustments */
     @media (max-width: 600px) {
       .update-image {
@@ -170,12 +274,63 @@
       .back-button {
         padding: 10px 20px;
       }
+      .leaderboard-item {
+        padding: 8px;
+      }
+      .leaderboard-pfp {
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
+      }
+      .leaderboard-placement {
+        width: 40px;
+        font-size: 1rem;
+      }
+    }
+    
+    /* Modal Styles for "How to Earn Points" */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      background-color: var(--card-background);
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+    }
+    .close-modal {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--text-color);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Game Update Log</h1>
+    <!-- Navigation -->
+    <div class="nav-buttons">
+      <button class="nav-button" onclick="showUpdates()">Updates</button>
+      <button class="nav-button" onclick="showLeaderboard()">Leaderboard</button>
+      <button class="nav-button" onclick="showUpcoming()">Upcoming</button>
+    </div>
+    
     <!-- Update List Section -->
     <div id="updateListSection">
       <ul class="update-list" id="updateList">
@@ -189,13 +344,75 @@
         <!-- Update detail content will be injected dynamically -->
       </div>
     </div>
+    
+    <!-- Leaderboard List Section -->
+    <div id="leaderboardListSection" style="display: none;">
+      <div id="leaderboardHeader" style="margin-bottom: 20px; text-align: center;">
+        <button class="nav-button" onclick="showInstructionsModal()">How to Earn Points</button>
+      </div>
+      <ul class="leaderboard-list" id="leaderboardList">
+        <!-- Leaderboard items will be injected dynamically -->
+      </ul>
+    </div>
+    <!-- Leaderboard Detail Section -->
+    <div id="leaderboardDetailSection" style="display: none;">
+      <button class="back-button" onclick="goBackLeaderboard()">← Back</button>
+      <div id="leaderboardContent" class="update-detail">
+        <!-- Leaderboard detail content will be injected dynamically -->
+      </div>
+    </div>
+    
+    <!-- Upcoming List Section -->
+    <div id="upcomingSection" style="display: none;">
+      <ul class="upcoming-list" id="upcomingList">
+        <!-- Upcoming update cards will be injected dynamically -->
+      </ul>
+    </div>
+    <!-- Upcoming Detail Section -->
+    <div id="upcomingDetailSection" style="display: none;">
+      <button class="back-button" onclick="goBackUpcoming()">← Back</button>
+      <div id="upcomingContent" class="update-detail">
+        <!-- Upcoming update detail content will be injected dynamically -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for "How to Earn Points" -->
+  <div id="instructionModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="hideInstructionsModal()">×</span>
+      <h2>How to Earn Points</h2>
+      <p>Earn points by playing the game and geting long shot kills, additionally we will be giving out extra points by how much do you play the game per day and how good are you in the game! (please note that playing alon does not count)</p>
+    </div>
   </div>
   
   <script>
-    // Update data with multiple "content" fields in a single section.
+    /* ---------- Helper Functions ---------- */
+    // Get ordinal suffix for placement numbers.
+    function getOrdinal(n) {
+      if (n % 100 >= 11 && n % 100 <= 13) {
+        return 'th';
+      }
+      switch (n % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+      }
+    }
+    
+    /* ---------- Modal Functions ---------- */
+    function showInstructionsModal() {
+      document.getElementById('instructionModal').style.display = 'block';
+    }
+    function hideInstructionsModal() {
+      document.getElementById('instructionModal').style.display = 'none';
+    }
+    
+    /* ---------- Updates Data & Functions ---------- */
     const updates = {
       update1: {
-        title: 'Version 1 - Game Lunch',
+        title: 'Version 1 - Game Launch',
         sections: [
           {
             header: "New Guns/Items:",
@@ -232,7 +449,7 @@
         image: 'm.png'
       },
       update2: {
-        title: 'Version 2 - Lootpool update',
+        title: 'Version 2 - Lootpool Update',
         sections: [
           {
             header: "New Guns/Items:",
@@ -259,8 +476,8 @@
         image: 'update1.png'
       }
     };
-
-    // Dynamically generate update list items.
+    
+    // Generate update list items.
     const updateList = document.getElementById('updateList');
     for (const key in updates) {
       if (updates.hasOwnProperty(key)) {
@@ -283,7 +500,7 @@
       }
     }
     
-    // Show update detail and hide the list view.
+    // Show update detail.
     function showUpdate(updateId) {
       const update = updates[updateId];
       let html = `
@@ -293,7 +510,6 @@
       `;
       update.sections.forEach(section => {
         html += `<h3>${section.header}</h3>`;
-        // Collect all keys that start with "content"
         const contentKeys = Object.keys(section).filter(key => key.startsWith("content") && section[key]);
         if (contentKeys.length > 1) {
           html += '<ul>';
@@ -310,12 +526,233 @@
       document.getElementById('updateListSection').style.display = 'none';
       document.getElementById('updateDetailSection').style.display = 'block';
     }
-    
-    // Return to the update list view.
     function goBack() {
       document.getElementById('updateDetailSection').style.display = 'none';
       document.getElementById('updateListSection').style.display = 'block';
     }
+    
+    /* ---------- Leaderboard Data & Functions ---------- */
+    const leaderboardData = [
+      {
+        id: 'player1',
+        name: 'VultureDxrk',
+        points: 80,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: 'player2',
+        name: 'Kabil100098',
+        points: 56,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: 'player3',
+        name: 'TopLion6492',
+        points: 45,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: '4',
+        name: 'clipped-by-salah',
+        points: 48,
+        description: 'an aggressive player who like to fight alot',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: '5',
+        name: 'lulwa_on_top1',
+        points: 39,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: '6',
+        name: 'Youki Shamy',
+        points: 23,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: '7',
+        name: 'RealisticElk3877',
+        points: 8,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: '8',
+        name: 'Yassin-2508',
+        points: 4,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      }
+    ];
+    
+    const leaderboardList = document.getElementById('leaderboardList');
+    // Sort by points descending.
+    const sortedLeaderboard = leaderboardData.slice().sort((a, b) => b.points - a.points);
+    sortedLeaderboard.forEach((player, index) => {
+      const li = document.createElement('li');
+      li.className = 'leaderboard-item';
+      li.onclick = () => showLeaderboardDetail(player.id);
+      
+      const placementSpan = document.createElement('span');
+      placementSpan.className = 'leaderboard-placement';
+      placementSpan.textContent = `${index + 1}${getOrdinal(index + 1)}`;
+      if (index === 0) {
+        placementSpan.classList.add('placement-first');
+      } else if (index === 1) {
+        placementSpan.classList.add('placement-second');
+      } else if (index === 2) {
+        placementSpan.classList.add('placement-third');
+      }
+      
+      const img = document.createElement('img');
+      img.src = player.profilePic;
+      img.alt = player.name;
+      img.className = 'leaderboard-pfp';
+      
+      const infoDiv = document.createElement('div');
+      infoDiv.innerHTML = `<strong>${player.name}</strong> - ${player.points} pts`;
+      
+      li.appendChild(placementSpan);
+      li.appendChild(img);
+      li.appendChild(infoDiv);
+      leaderboardList.appendChild(li);
+    });
+    
+    function showLeaderboardDetail(playerId) {
+      const player = leaderboardData.find(p => p.id === playerId);
+      let html = `
+        <div class="detail-text">
+          <h2>${player.name}</h2>
+          <p><strong>Points:</strong> ${player.points}</p>
+          <p>${player.description}</p>
+        </div>
+      `;
+      document.getElementById('leaderboardContent').innerHTML = html;
+      document.getElementById('leaderboardListSection').style.display = 'none';
+      document.getElementById('leaderboardDetailSection').style.display = 'block';
+    }
+    function goBackLeaderboard() {
+      document.getElementById('leaderboardDetailSection').style.display = 'none';
+      document.getElementById('leaderboardListSection').style.display = 'block';
+    }
+    
+    /* ---------- Upcoming Updates Data & Functions ---------- */
+    const upcomingUpdates = [
+      {
+        id: 'up1',
+        title: 'Season 2 - Starfall',
+        description: 'This will include: New POIs, New Guns, New Fetures, New Bosses, New Medalions, New Augments, New Gold System, and so much more! ',
+        image: 'starfall.png',
+        // Set releaseDate as an ISO string (adjust as needed)
+        releaseDate: '2025-02-22T08:00:00Z'
+      },
+      {
+        id: 'up2',
+        title: 'Earn V-Bucks Now!',
+        description: 'If you start making content about the game and get view and traction you could earn up to 5k vbucks per month and on top of that you get to get a spical in game event!',
+        image: 'vbucks.png',
+        // Set releaseDate as an ISO string (adjust as needed)
+        releaseDate: '2025-02-20T08:00:00Z'
+      }
+    ];
+    
+    const upcomingList = document.getElementById('upcomingList');
+    upcomingUpdates.forEach(update => {
+      const li = document.createElement('li');
+      li.className = 'upcoming-item';
+      li.onclick = () => showUpcomingDetail(update.id);
+      
+      const imgDiv = document.createElement('div');
+      imgDiv.className = 'update-image';
+      imgDiv.style.backgroundImage = `url('${update.image}')`;
+      
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'update-title';
+      titleDiv.textContent = update.title;
+      
+      // Create a timer element with a data attribute for the release date.
+      const timerP = document.createElement('p');
+      timerP.className = 'upcoming-timer';
+      timerP.setAttribute('data-release', update.releaseDate);
+      timerP.textContent = 'Loading timer...';
+      
+      li.appendChild(imgDiv);
+      li.appendChild(titleDiv);
+      li.appendChild(timerP);
+      upcomingList.appendChild(li);
+    });
+    
+    function showUpcomingDetail(upId) {
+      const update = upcomingUpdates.find(u => u.id === upId);
+      let html = `
+        <img class="update-detail-image" src="${update.image}" alt="${update.title}">
+        <div class="detail-text">
+          <h2>${update.title}</h2>
+          <p>${update.description}</p>
+          <p class="upcoming-timer" data-release="${update.releaseDate}">Loading timer...</p>
+        </div>
+      `;
+      document.getElementById('upcomingContent').innerHTML = html;
+      document.getElementById('upcomingSection').style.display = 'none';
+      document.getElementById('upcomingDetailSection').style.display = 'block';
+    }
+    function goBackUpcoming() {
+      document.getElementById('upcomingDetailSection').style.display = 'none';
+      document.getElementById('upcomingSection').style.display = 'block';
+    }
+    
+    /* ---------- Navigation Functions ---------- */
+    function showUpdates() {
+      document.getElementById('updateListSection').style.display = 'block';
+      document.getElementById('updateDetailSection').style.display = 'none';
+      document.getElementById('leaderboardListSection').style.display = 'none';
+      document.getElementById('leaderboardDetailSection').style.display = 'none';
+      document.getElementById('upcomingSection').style.display = 'none';
+      document.getElementById('upcomingDetailSection').style.display = 'none';
+    }
+    function showLeaderboard() {
+      document.getElementById('updateListSection').style.display = 'none';
+      document.getElementById('updateDetailSection').style.display = 'none';
+      document.getElementById('leaderboardListSection').style.display = 'block';
+      document.getElementById('leaderboardDetailSection').style.display = 'none';
+      document.getElementById('upcomingSection').style.display = 'none';
+      document.getElementById('upcomingDetailSection').style.display = 'none';
+    }
+    function showUpcoming() {
+      document.getElementById('updateListSection').style.display = 'none';
+      document.getElementById('updateDetailSection').style.display = 'none';
+      document.getElementById('leaderboardListSection').style.display = 'none';
+      document.getElementById('leaderboardDetailSection').style.display = 'none';
+      document.getElementById('upcomingSection').style.display = 'block';
+      document.getElementById('upcomingDetailSection').style.display = 'none';
+    }
+    
+    /* ---------- Countdown Timer Functionality ---------- */
+    function updateCountdowns() {
+      const timerElements = document.querySelectorAll('.upcoming-timer');
+      timerElements.forEach(el => {
+        const releaseTime = new Date(el.getAttribute('data-release')).getTime();
+        const now = new Date().getTime();
+        const diff = releaseTime - now;
+        if (diff <= 0) {
+          el.textContent = 'Released!';
+        } else {
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+          el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+      });
+    }
+    // Update countdowns every second.
+    setInterval(updateCountdowns, 1000);
   </script>
 </body>
 </html>
