@@ -409,10 +409,127 @@
       document.getElementById('instructionModal').style.display = 'none';
     }
     
-    /* ---------- Updates Data & Functions ---------- */
+    /* ---------- Updates Data & Functions  */
     const updates = {
-      update1: {
-        title: 'Version 1 - Game Launch',
+    /* ----------
+        update3: {
+        title: 'Season 2 - Season Update',
+        sections: [
+          {
+            header: "New Guns/Items:",
+            content: "Ranger AR",
+            content2: "Havoc Suppressed AR",
+            content3: "Thunder Shotgun",
+            content4: "Maven Shotgun",
+            content5: "Ranger Pistol",
+            content6: "Slurp",
+            content7: "Grapple Blade",
+            content8: "Grapler",
+            content9: "Rocket Ram",
+            content10: "Smock Grande",
+          },
+          {
+            header: "Vulted Guns:",
+            content: "Nemesis AR",
+            content2: "Combat AR",
+            content3: "Charge Shotgun",
+            content4: "Rail Gun",
+            content5: "Blade",
+            content6: "Rift",
+            content7: "Flowbary",
+            content8: "Remote Explosive",
+            content9: "Impulse Grenade",
+            content10: "Lunch pad",
+          },
+          {
+            header: "Curent Lootpoll:",
+            content: "Ranger AR",
+            content2: "Pump Shotgun",
+            content3: "Thunder Shotgun",
+            content4: "Maven Shotgun",
+            content11: "Twin Mag SMG",
+            content12: "Mammoth Pistol",
+            content5: "Ranger Pistol",
+            content13: "Big Pot",
+            content14: "Mini's",
+            content6: "Slurp",
+            content15: "Flowbary Fizz",
+            content7: "Grapple Blade",
+            content8: "Grapler",
+            content9: "Rocket Ram",
+            content16: "Shockwave",
+            content10: "Smock Grande",
+            content17: "Crash-Pad JR",
+          },
+          {
+            header: "New POI's:",
+            content: "Shipment X",
+            content2: "Light House",
+            content3: "Sniper House",
+          },
+          {
+            header: "Vaulted POI's:",
+            content: "Casle X",
+            content2: "Slapy Gas",
+          },
+          {
+            header: "New System's:",
+            content: "New Supply Drops System",
+            content2: "New Lama System",
+          },
+          {
+            header: "New Bosses:",
+            content: "The Car Worker Boss - Mythic Havoc AR",
+            content2: "The Shipment X Boss - Mythic Ranger AR - Vault Key Card",
+          },
+          {
+            header: "Vault Contains:",
+            content: "7 Normal Cheasts ",
+            content2: "1 Lama",
+          },
+        {
+          header: "Supply Drop Contains:",
+            content: "50% Rare Gun",
+            content2: "35% Epic Gun",
+            content3: "15% Legendary Gun",
+            content4: "100% Healing Item",
+            content5: "100% Mobility Item",
+            content6: "100% 200 Wood, Brick, Metal",
+          },
+        ],
+        image: 'starfall.png'
+        
+      },
+      ---------- */
+        update2: {
+        title: 'Version 2 - Lootpool Update',
+        sections: [
+          {
+            header: "New Guns/Items:",
+            content: "Impulse Grenade",
+            content2: "Mammoth Pistol",
+            content3: "Crash-pad JR",
+            content4: "Remote Explosive",
+          },
+          {
+            header: "Nerfed:",
+            content: "Rail Gun | 5% chance to 3% chance",
+            content2: "Big Pot | 17.5% chance to 14% chance",
+            content3: "Mini's | 17.5% chance to 14% chance",
+            content4: "Flowbary | 17.5% chance to 14% chance",
+            content5: "Flowbary Fizz | 17.5% chance to 14% chance",
+            content6: "Blade | 17.5% chance to 10% chance",
+          },
+          {
+            header: "Chance:",
+            content: "Mammoth Pistol | 3% chance Epic",
+            content2: "Mammoth Pistol | 1% chance Legendary",
+          },
+        ],
+        image: 'update1.png'
+      },
+        update1: {
+        title: 'Season 1 - Game Launch',
         sections: [
           {
             header: "New Guns/Items:",
@@ -448,33 +565,6 @@
         ],
         image: 'm.png'
       },
-      update2: {
-        title: 'Version 2 - Lootpool Update',
-        sections: [
-          {
-            header: "New Guns/Items:",
-            content: "Impulse Grenade",
-            content2: "Mammoth Pistol",
-            content3: "Crash-pad JR",
-            content4: "Remote Explosive",
-          },
-          {
-            header: "Nerfed:",
-            content: "Rail Gun | 5% chance to 3% chance",
-            content2: "Big Pot | 17.5% chance to 14% chance",
-            content3: "Mini's | 17.5% chance to 14% chance",
-            content4: "Flowbary | 17.5% chance to 14% chance",
-            content5: "Flowbary Fizz | 17.5% chance to 14% chance",
-            content6: "Blade | 17.5% chance to 10% chance",
-          },
-          {
-            header: "Chance:",
-            content: "Mammoth Pistol | 3% chance Epic",
-            content2: "Mammoth Pistol | 1% chance Legendary",
-          },
-        ],
-        image: 'update1.png'
-      }
     };
     
     // Generate update list items.
@@ -557,7 +647,7 @@
       {
         id: '4',
         name: 'clipped-by-salah',
-        points: 163,
+        points: 226,
         description: 'an aggressive player who like to fight alot',
         profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
       },
@@ -600,6 +690,13 @@
         id: '10',
         name: 'GM_Omar_ID',
         points: 19,
+        description: 'nothing found...',
+        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      },
+      {
+        id: '11',
+        name: 'greend-dragon',
+        points: 63,
         description: 'nothing found...',
         profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
       }
