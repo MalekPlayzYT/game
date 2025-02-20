@@ -327,10 +327,10 @@
       <button class="nav-button" onclick="showUpcoming()">Upcoming</button>
     </div>
     
-    <!-- Global Countdown Banner -->
+    <!-- Global Countdown Banner 
     <div id="globalCountdown" class="global-countdown">
       <p id="globalCountdownText">Season 2 begins in: Loading countdown...</p>
-    </div>
+    </div>-->
     
     <!-- Update List Section -->
     <div id="updateListSection">
@@ -390,12 +390,6 @@
   </div>
   
   <!-- Animated Celebration Popup -->
-  <div id="celebrationPopup" class="celebration-popup" style="display: none;">
-    <h2>Disclaimer</h2>
-    <p>It's about to get huge!</p>
-    <div class="graphic"></div>
-    <button onclick="closeCelebrationPopup()">Close</button>
-  </div>
   
   <script>
     /* ---------- Helper Functions ---------- */
@@ -419,6 +413,14 @@
     
     /* ---------- Updates Data & Functions ---------- */
     const updates = {
+        
+        update4: {
+        title: 'Season 2 - Bug Fixes',
+        sections: [
+           {header: "Bug Fixes:", content: "Vault Bug", content2: "Amo Create Bug",content2: "Name Tag Bug" },
+        ],
+        image: 'bugfix.png'
+      },
         
       update3: {
         title: 'Season 2 - Season Update',
