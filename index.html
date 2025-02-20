@@ -54,6 +54,18 @@
       color: var(--text-color);
     }
     
+    /* Global Countdown Banner */
+    .global-countdown {
+      text-align: center;
+      background: var(--primary-color);
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      box-shadow: var(--box-shadow);
+    }
+    
     /* Navigation Buttons */
     .nav-buttons {
       text-align: center;
@@ -72,6 +84,16 @@
     }
     .nav-button:hover {
       background: var(--primary-color-dark);
+    }
+    
+    /* Leaderboard Multiplier Display - no background, fixed right */
+    #multiplierDisplay {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
     }
     
     /* Update List Styles */
@@ -102,7 +124,6 @@
       background-size: cover;
       background-position: center;
     }
-    /* Fade effect on image bottom */
     .update-image::after {
       content: "";
       position: absolute;
@@ -212,18 +233,11 @@
       margin-right: 15px;
       object-fit: cover;
     }
-    /* Podium styles for top 3 placements */
-    .placement-first {
-      color: gold;
-    }
-    .placement-second {
-      color: silver;
-    }
-    .placement-third {
-      color: #cd7f32;
-    }
+    .placement-first { color: gold; }
+    .placement-second { color: silver; }
+    .placement-third { color: #cd7f32; }
     
-    /* Upcoming Styles (similar to updates) */
+    /* Upcoming Styles */
     .upcoming-list {
       list-style: none;
       padding: 0;
@@ -245,7 +259,6 @@
       transform: translateY(-4px);
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
-    /* Cleaner Timer Styling */
     .upcoming-timer {
       display: block;
       margin: 15px auto;
@@ -262,30 +275,13 @@
     
     /* Responsive Adjustments */
     @media (max-width: 600px) {
-      .update-image {
-        height: 150px;
-      }
-      .update-title {
-        font-size: 1.1rem;
-      }
-      .detail-text h2 {
-        font-size: 1.8rem;
-      }
-      .back-button {
-        padding: 10px 20px;
-      }
-      .leaderboard-item {
-        padding: 8px;
-      }
-      .leaderboard-pfp {
-        width: 35px;
-        height: 35px;
-        margin-right: 10px;
-      }
-      .leaderboard-placement {
-        width: 40px;
-        font-size: 1rem;
-      }
+      .update-image { height: 150px; }
+      .update-title { font-size: 1.1rem; }
+      .detail-text h2 { font-size: 1.8rem; }
+      .back-button { padding: 10px 20px; }
+      .leaderboard-item { padding: 8px; }
+      .leaderboard-pfp { width: 35px; height: 35px; margin-right: 10px; }
+      .leaderboard-placement { width: 40px; font-size: 1rem; }
     }
     
     /* Modal Styles for "How to Earn Points" */
@@ -331,6 +327,11 @@
       <button class="nav-button" onclick="showUpcoming()">Upcoming</button>
     </div>
     
+    <!-- Global Countdown Banner -->
+    <div id="globalCountdown" class="global-countdown">
+      <p id="globalCountdownText">Season 2 begins in: Loading countdown...</p>
+    </div>
+    
     <!-- Update List Section -->
     <div id="updateListSection">
       <ul class="update-list" id="updateList">
@@ -347,6 +348,8 @@
     
     <!-- Leaderboard List Section -->
     <div id="leaderboardListSection" style="display: none;">
+      <!-- Multiplier Display (positioned fixed on the right) -->
+      <div id="multiplierDisplay">Today's Multiplier: <span id="multiplierValue">2</span></div>
       <div id="leaderboardHeader" style="margin-bottom: 20px; text-align: center;">
         <button class="nav-button" onclick="showInstructionsModal()">How to Earn Points</button>
       </div>
@@ -382,17 +385,22 @@
     <div class="modal-content">
       <span class="close-modal" onclick="hideInstructionsModal()">×</span>
       <h2>How to Earn Points</h2>
-      <p>Earn points by playing the game and geting long shot kills, additionally we will be giving out extra points by how much do you play the game per day and how good are you in the game! (please note that playing alon does not count)</p>
+      <p>Earn points by playing the game and getting long shot kills. We’ll also award extra points based on your daily playtime and skill level! (Please note that playing alone does not count.)</p>
     </div>
+  </div>
+  
+  <!-- Animated Celebration Popup -->
+  <div id="celebrationPopup" class="celebration-popup" style="display: none;">
+    <h2>Disclaimer</h2>
+    <p>It's about to get huge!</p>
+    <div class="graphic"></div>
+    <button onclick="closeCelebrationPopup()">Close</button>
   </div>
   
   <script>
     /* ---------- Helper Functions ---------- */
-    // Get ordinal suffix for placement numbers.
     function getOrdinal(n) {
-      if (n % 100 >= 11 && n % 100 <= 13) {
-        return 'th';
-      }
+      if (n % 100 >= 11 && n % 100 <= 13) return 'th';
       switch (n % 10) {
         case 1: return 'st';
         case 2: return 'nd';
@@ -409,165 +417,45 @@
       document.getElementById('instructionModal').style.display = 'none';
     }
     
-    /* ---------- Updates Data & Functions  */
+    /* ---------- Updates Data & Functions ---------- */
     const updates = {
-    /* ----------
-        update3: {
+        /* ----------
+      update3: {
         title: 'Season 2 - Season Update',
         sections: [
-          {
-            header: "New Guns/Items:",
-            content: "Ranger AR",
-            content2: "Havoc Suppressed AR",
-            content3: "Thunder Shotgun",
-            content4: "Maven Shotgun",
-            content5: "Ranger Pistol",
-            content6: "Slurp",
-            content7: "Grapple Blade",
-            content8: "Grapler",
-            content9: "Rocket Ram",
-            content10: "Smock Grande",
-          },
-          {
-            header: "Vulted Guns:",
-            content: "Nemesis AR",
-            content2: "Combat AR",
-            content3: "Charge Shotgun",
-            content4: "Rail Gun",
-            content5: "Blade",
-            content6: "Rift",
-            content7: "Flowbary",
-            content8: "Remote Explosive",
-            content9: "Impulse Grenade",
-            content10: "Lunch pad",
-          },
-          {
-            header: "Curent Lootpoll:",
-            content: "Ranger AR",
-            content2: "Pump Shotgun",
-            content3: "Thunder Shotgun",
-            content4: "Maven Shotgun",
-            content11: "Twin Mag SMG",
-            content12: "Mammoth Pistol",
-            content5: "Ranger Pistol",
-            content13: "Big Pot",
-            content14: "Mini's",
-            content6: "Slurp",
-            content15: "Flowbary Fizz",
-            content7: "Grapple Blade",
-            content8: "Grapler",
-            content9: "Rocket Ram",
-            content16: "Shockwave",
-            content10: "Smock Grande",
-            content17: "Crash-Pad JR",
-          },
-          {
-            header: "New POI's:",
-            content: "Shipment X",
-            content2: "Light House",
-            content3: "Sniper House",
-          },
-          {
-            header: "Vaulted POI's:",
-            content: "Casle X",
-            content2: "Slapy Gas",
-          },
-          {
-            header: "New System's:",
-            content: "New Supply Drops System",
-            content2: "New Lama System",
-          },
-          {
-            header: "New Bosses:",
-            content: "The Car Worker Boss - Mythic Havoc AR",
-            content2: "The Shipment X Boss - Mythic Ranger AR - Vault Key Card",
-          },
-          {
-            header: "Vault Contains:",
-            content: "7 Normal Cheasts ",
-            content2: "1 Lama",
-          },
-        {
-          header: "Supply Drop Contains:",
-            content: "50% Rare Gun",
-            content2: "35% Epic Gun",
-            content3: "15% Legendary Gun",
-            content4: "100% Healing Item",
-            content5: "100% Mobility Item",
-            content6: "100% 200 Wood, Brick, Metal",
-          },
+          { header: "New Guns/Items:", content: "Ranger AR", content2: "Havoc Suppressed AR", content3: "Thunder Shotgun", content4: "Maven Shotgun", content5: "Ranger Pistol", content6: "Slurp", content7: "Grapple Blade", content8: "Grapler", content9: "Rocket Ram", content10: "Smock Grande" },
+          { header: "Vaulted Guns:", content: "Nemesis AR", content2: "Combat AR", content3: "Charge Shotgun", content4: "Rail Gun", content5: "Blade", content6: "Rift", content7: "Flowbary", content8: "Remote Explosive", content9: "Impulse Grenade", content10: "Lunch Pad" },
+          { header: "Current Lootpoll:", content: "Ranger AR", content2: "Pump Shotgun", content3: "Thunder Shotgun", content4: "Maven Shotgun", content11: "Twin Mag SMG", content12: "Mammoth Pistol", content5: "Ranger Pistol", content13: "Big Pot", content14: "Mini's", content6: "Slurp", content15: "Flowbary Fizz", content7: "Grapple Blade", content8: "Grapler", content9: "Rocket Ram", content16: "Shockwave", content10: "Smock Grande", content17: "Crash-Pad JR" },
+          { header: "New POI's:", content: "Shipment X", content2: "Light House", content3: "Sniper House" },
+          { header: "Vaulted POI's:", content: "Castle X", content2: "Slapy Gas" },
+          { header: "New Systems:", content: "New Supply Drops System", content2: "New Lama System" },
+          { header: "New Bosses:", content: "The Car Worker Boss - Mythic Havoc AR", content2: "The Shipment X Boss - Mythic Ranger AR - Vault Key Card" },
+          { header: "Vault Contains:", content: "7 Normal Chests", content2: "1 Lama" },
+          { header: "Supply Drop Contains:", content: "50% Rare Gun", content2: "35% Epic Gun", content3: "15% Legendary Gun", content4: "100% Healing Item", content5: "100% Mobility Item", content6: "200 Wood, Brick, Metal" }
         ],
         image: 'starfall.png'
-        
       },
       ---------- */
-        update2: {
+      update2: {
         title: 'Version 2 - Lootpool Update',
         sections: [
-          {
-            header: "New Guns/Items:",
-            content: "Impulse Grenade",
-            content2: "Mammoth Pistol",
-            content3: "Crash-pad JR",
-            content4: "Remote Explosive",
-          },
-          {
-            header: "Nerfed:",
-            content: "Rail Gun | 5% chance to 3% chance",
-            content2: "Big Pot | 17.5% chance to 14% chance",
-            content3: "Mini's | 17.5% chance to 14% chance",
-            content4: "Flowbary | 17.5% chance to 14% chance",
-            content5: "Flowbary Fizz | 17.5% chance to 14% chance",
-            content6: "Blade | 17.5% chance to 10% chance",
-          },
-          {
-            header: "Chance:",
-            content: "Mammoth Pistol | 3% chance Epic",
-            content2: "Mammoth Pistol | 1% chance Legendary",
-          },
+          { header: "New Guns/Items:", content: "Impulse Grenade", content2: "Mammoth Pistol", content3: "Crash-pad JR", content4: "Remote Explosive" },
+          { header: "Nerfed:", content: "Rail Gun | 5% chance to 3% chance", content2: "Big Pot | 17.5% chance to 14% chance", content3: "Mini's | 17.5% chance to 14% chance", content4: "Flowbary | 17.5% chance to 14% chance", content5: "Flowbary Fizz | 17.5% chance to 14% chance", content6: "Blade | 17.5% chance to 10% chance" },
+          { header: "Chance:", content: "Mammoth Pistol | 3% chance Epic", content2: "Mammoth Pistol | 1% chance Legendary" }
         ],
         image: 'update1.png'
       },
-        update1: {
+      update1: {
         title: 'Season 1 - Game Launch',
         sections: [
-          {
-            header: "New Guns/Items:",
-            content: "Combat AR",
-            content2: "Nemesis AR",
-            content3: "Charge Shotgun",
-            content4: "Pump Shotgun",
-            content5: "Rail Gun",
-            content6: "Twin Mag SMG",
-            content7: "Big Pot",
-            content8: "Mini's",
-            content9: "Flowbary",
-            content10: "Flowbary Fizz",
-            content11: "Blade",
-            content12: "Lunch Pad",
-            content13: "Rift",
-            content14: "Shockwave"
-          },
-          {
-            header: "New POI's:",
-            content: "Slapy Gas",
-            content2: "Broken Hotel",
-            content3: "Mini Corol Castle",
-            content4: "Tilted Clock",
-            content5: "Jungle Base",
-            content6: "Ruined Reals",
-            content7: "Castle X",
-          },
-          {
-            header: "New Bosses:",
-            content: "Gohst Boss: Mythic Charge Shotgun - Mythic Nemesis AR"
-          }
+          { header: "New Guns/Items:", content: "Combat AR", content2: "Nemesis AR", content3: "Charge Shotgun", content4: "Pump Shotgun", content5: "Rail Gun", content6: "Twin Mag SMG", content7: "Big Pot", content8: "Mini's", content9: "Flowbary", content10: "Flowbary Fizz", content11: "Blade", content12: "Lunch Pad", content13: "Rift", content14: "Shockwave" },
+          { header: "New POI's:", content: "Slapy Gas", content2: "Broken Hotel", content3: "Mini Corol Castle", content4: "Tilted Clock", content5: "Jungle Base", content6: "Ruined Reals", content7: "Castle X" },
+          { header: "New Bosses:", content: "Ghost Boss: Mythic Charge Shotgun - Mythic Nemesis AR" }
         ],
         image: 'm.png'
-      },
+      }
     };
     
-    // Generate update list items.
     const updateList = document.getElementById('updateList');
     for (const key in updates) {
       if (updates.hasOwnProperty(key)) {
@@ -575,37 +463,29 @@
         const li = document.createElement('li');
         li.className = 'update-item';
         li.onclick = () => showUpdate(key);
-        
         const imgDiv = document.createElement('div');
         imgDiv.className = 'update-image';
         imgDiv.style.backgroundImage = `url('${update.image}')`;
-        
         const titleDiv = document.createElement('div');
         titleDiv.className = 'update-title';
         titleDiv.textContent = update.title;
-        
         li.appendChild(imgDiv);
         li.appendChild(titleDiv);
         updateList.appendChild(li);
       }
     }
     
-    // Show update detail.
     function showUpdate(updateId) {
       const update = updates[updateId];
-      let html = `
-        <img class="update-detail-image" src="${update.image}" alt="${update.title}">
-        <div class="detail-text">
-          <h2>${update.title}</h2>
-      `;
+      let html = `<img class="update-detail-image" src="${update.image}" alt="${update.title}">
+                  <div class="detail-text">
+                    <h2>${update.title}</h2>`;
       update.sections.forEach(section => {
         html += `<h3>${section.header}</h3>`;
         const contentKeys = Object.keys(section).filter(key => key.startsWith("content") && section[key]);
         if (contentKeys.length > 1) {
           html += '<ul>';
-          contentKeys.forEach(key => {
-            html += `<li>${section[key]}</li>`;
-          });
+          contentKeys.forEach(key => { html += `<li>${section[key]}</li>`; });
           html += '</ul>';
         } else if (contentKeys.length === 1) {
           html += `<p>${section[contentKeys[0]]}</p>`;
@@ -621,121 +501,44 @@
       document.getElementById('updateListSection').style.display = 'block';
     }
     
-    /* ---------- Leaderboard Data & Functions ---------- */
+    /* ---------- Leaderboard Functions ---------- */
     const leaderboardData = [
-      {
-        id: 'player1',
-        name: 'VultureDxrk',
-        points: 207,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: 'player2',
-        name: 'Kabil100098',
-        points: 206,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: 'player3',
-        name: 'TopLion6492',
-        points: 82,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '4',
-        name: 'clipped-by-salah',
-        points: 256,
-        description: 'an aggressive player who like to fight alot',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '5',
-        name: 'lulwa_on_top1',
-        points: 39,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '6',
-        name: 'Youki Shamy',
-        points: 23,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '7',
-        name: 'RealisticElk3877',
-        points: 8,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '8',
-        name: 'Yassin-2508',
-        points: 4,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '9',
-        name: 'KevinMillerPS',
-        points: 105,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '10',
-        name: 'GM_Omar_ID',
-        points: 19,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '11',
-        name: 'greend-dragon',
-        points: 140,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      },
-      {
-        id: '12',
-        name: 'General_October',
-        points: 83,
-        description: 'nothing found...',
-        profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      }
+      { id: 'player1', name: 'VultureDxrk', points: 225, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'player2', name: 'Kabil100098', points: 226, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'player3', name: 'TopLion6492', points: 82, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '4', name: 'clipped-by-salah', points: 286, description: 'an aggressive player who likes to fight a lot', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '5', name: 'lulwa_on_top1', points: 39, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '6', name: 'Youki Shamy', points: 23, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '7', name: 'RealisticElk3877', points: 8, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '8', name: 'Yassin-2508', points: 4, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '9', name: 'KevinMillerPS', points: 234, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '10', name: 'GM_Omar_ID', points: 19, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '11', name: 'greend-dragon', points: 140, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'KevinMillerFriend', name: 'TimGotYa', points: 12, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'o1s', name: 'totalynoto1s', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'cerine', name: 'RappidRoster', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '12', name: 'General_October', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: '13', name: 'golfzilla1252', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' }
+
     ];
-    
     const leaderboardList = document.getElementById('leaderboardList');
-    // Sort by points descending.
     const sortedLeaderboard = leaderboardData.slice().sort((a, b) => b.points - a.points);
     sortedLeaderboard.forEach((player, index) => {
       const li = document.createElement('li');
       li.className = 'leaderboard-item';
       li.onclick = () => showLeaderboardDetail(player.id);
-      
       const placementSpan = document.createElement('span');
       placementSpan.className = 'leaderboard-placement';
       placementSpan.textContent = `${index + 1}${getOrdinal(index + 1)}`;
-      if (index === 0) {
-        placementSpan.classList.add('placement-first');
-      } else if (index === 1) {
-        placementSpan.classList.add('placement-second');
-      } else if (index === 2) {
-        placementSpan.classList.add('placement-third');
-      }
-      
+      if (index === 0) placementSpan.classList.add('placement-first');
+      else if (index === 1) placementSpan.classList.add('placement-second');
+      else if (index === 2) placementSpan.classList.add('placement-third');
       const img = document.createElement('img');
       img.src = player.profilePic;
       img.alt = player.name;
       img.className = 'leaderboard-pfp';
-      
       const infoDiv = document.createElement('div');
       infoDiv.innerHTML = `<strong>${player.name}</strong> - ${player.points} pts`;
-      
       li.appendChild(placementSpan);
       li.appendChild(img);
       li.appendChild(infoDiv);
@@ -744,13 +547,11 @@
     
     function showLeaderboardDetail(playerId) {
       const player = leaderboardData.find(p => p.id === playerId);
-      let html = `
-        <div class="detail-text">
-          <h2>${player.name}</h2>
-          <p><strong>Points:</strong> ${player.points}</p>
-          <p>${player.description}</p>
-        </div>
-      `;
+      let html = `<div class="detail-text">
+                    <h2>${player.name}</h2>
+                    <p><strong>Points:</strong> ${player.points}</p>
+                    <p>${player.description}</p>
+                  </div>`;
       document.getElementById('leaderboardContent').innerHTML = html;
       document.getElementById('leaderboardListSection').style.display = 'none';
       document.getElementById('leaderboardDetailSection').style.display = 'block';
@@ -760,46 +561,25 @@
       document.getElementById('leaderboardListSection').style.display = 'block';
     }
     
-    /* ---------- Upcoming Updates Data & Functions ---------- */
+    /* ---------- Upcoming Updates Functions ---------- */
     const upcomingUpdates = [
-      {
-        id: 'up1',
-        title: 'Season 2 - Starfall',
-        description: 'This will include: New POIs, New Guns, New Fetures, New Bosses, New Medalions, New Augments, New Gold System, and so much more! ',
-        image: 'starfall.png',
-        // Set releaseDate as an ISO string (adjust as needed)
-        releaseDate: '2025-02-22T08:00:00Z'
-      },
-      {
-        id: 'up2',
-        title: 'Earn V-Bucks Now!',
-        description: 'If you start making content about the game and get view and traction you could earn up to 5k vbucks per month and on top of that you get to get a spical in game event!',
-        image: 'vbucks.png',
-        // Set releaseDate as an ISO string (adjust as needed)
-        releaseDate: '2025-02-20T08:00:00Z'
-      }
+      { id: 'up1', title: 'Season 2 - Starfall', description: 'This will include: New POIs, New Guns, New Features, New Bosses, New Medallions, New Augments, a New Gold System, and so much more!', image: 'starfall.png', releaseDate: '2025-02-20T07:00:00Z' },
     ];
-    
     const upcomingList = document.getElementById('upcomingList');
     upcomingUpdates.forEach(update => {
       const li = document.createElement('li');
       li.className = 'upcoming-item';
       li.onclick = () => showUpcomingDetail(update.id);
-      
       const imgDiv = document.createElement('div');
       imgDiv.className = 'update-image';
       imgDiv.style.backgroundImage = `url('${update.image}')`;
-      
       const titleDiv = document.createElement('div');
       titleDiv.className = 'update-title';
       titleDiv.textContent = update.title;
-      
-      // Create a timer element with a data attribute for the release date.
       const timerP = document.createElement('p');
       timerP.className = 'upcoming-timer';
       timerP.setAttribute('data-release', update.releaseDate);
       timerP.textContent = 'Loading timer...';
-      
       li.appendChild(imgDiv);
       li.appendChild(titleDiv);
       li.appendChild(timerP);
@@ -808,14 +588,12 @@
     
     function showUpcomingDetail(upId) {
       const update = upcomingUpdates.find(u => u.id === upId);
-      let html = `
-        <img class="update-detail-image" src="${update.image}" alt="${update.title}">
-        <div class="detail-text">
-          <h2>${update.title}</h2>
-          <p>${update.description}</p>
-          <p class="upcoming-timer" data-release="${update.releaseDate}">Loading timer...</p>
-        </div>
-      `;
+      let html = `<img class="update-detail-image" src="${update.image}" alt="${update.title}">
+                  <div class="detail-text">
+                    <h2>${update.title}</h2>
+                    <p>${update.description}</p>
+                    <p class="upcoming-timer" data-release="${update.releaseDate}">Loading timer...</p>
+                  </div>`;
       document.getElementById('upcomingContent').innerHTML = html;
       document.getElementById('upcomingSection').style.display = 'none';
       document.getElementById('upcomingDetailSection').style.display = 'block';
@@ -852,6 +630,9 @@
     }
     
     /* ---------- Countdown Timer Functionality ---------- */
+    let celebrationTriggered = false;
+    const season2ReleaseTime = new Date('2025-02-20T07:00:00Z').getTime();
+    
     function updateCountdowns() {
       const timerElements = document.querySelectorAll('.upcoming-timer');
       timerElements.forEach(el => {
@@ -869,8 +650,85 @@
         }
       });
     }
-    // Update countdowns every second.
     setInterval(updateCountdowns, 1000);
+    
+    function updateGlobalCountdown() {
+      const globalCountdown = document.getElementById('globalCountdownText');
+      const now = new Date().getTime();
+      const diff = season2ReleaseTime - now;
+      if(diff <= 0) {
+        globalCountdown.textContent = "Season 2 is here!";
+        if(!celebrationTriggered) {
+          triggerCelebration();
+          celebrationTriggered = true;
+        }
+      } else {
+        const days = Math.floor(diff / (1000*60*60*24));
+        const hours = Math.floor((diff % (1000*60*60*24))/(1000*60*60));
+        const minutes = Math.floor((diff % (1000*60*60))/(1000*60));
+        const seconds = Math.floor((diff % (1000*60))/1000);
+        globalCountdown.textContent = `Season 2 begins in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+    }
+    setInterval(updateGlobalCountdown, 1000);
+    
+    /* ---------- Leaderboard Multiplier Functions ---------- */
+    let currentMultiplier = 2; // Starting multiplier
+    function updateMultiplierDisplay() {
+      const multiplierEl = document.getElementById('multiplierValue');
+      multiplierEl.textContent = currentMultiplier;
+      // Only change the number color (no background)
+      if (currentMultiplier === 1) {
+        multiplierEl.style.background = "none";
+        multiplierEl.style.color = "Grey"; // Grey
+      } else if (currentMultiplier === 2) {
+        multiplierEl.style.background = "none";
+        multiplierEl.style.color = "Gold"; // Silver
+      } else if (currentMultiplier === 3) {
+        multiplierEl.style.background = "none";
+        multiplierEl.style.color = "#FFD700"; // Gold
+      } else if (currentMultiplier >= 4 && currentMultiplier <= 5) {
+        // For gradient text, use background clip technique.
+        multiplierEl.style.background = "linear-gradient(45deg, #8A2BE2, #DA70D6)";
+        multiplierEl.style.webkitBackgroundClip = "text";
+        multiplierEl.style.color = "transparent";
+      }
+    }
+    updateMultiplierDisplay();
+    
+    /* ---------- Celebration Functions (Explosion + Animated Popup) ---------- */
+    function triggerCelebration() {
+      // Trigger confetti explosion for 12 seconds.
+      const duration = 12000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 50, spread: 500, ticks: 100, zIndex: 1000 };
+  
+      function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+  
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          // After explosion, show the animated popup after a brief delay.
+          setTimeout(showCelebrationPopup, 500);
+          return;
+        }
+        const particleCount = 100 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { 
+          particleCount, 
+          origin: { x: randomInRange(0, 1), y: Math.random() - 0.2 }
+        }));
+      }, 200);
+    }
+    
+    function showCelebrationPopup() {
+      const popup = document.getElementById('celebrationPopup');
+      popup.style.display = 'block';
+    }
+    
+    function closeCelebrationPopup() {
+      document.getElementById('celebrationPopup').style.display = 'none';
+    }
   </script>
 </body>
 </html>
