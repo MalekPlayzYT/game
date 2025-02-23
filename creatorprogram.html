@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Creator Program Portal</title>
+  <!-- Updated Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Global Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: #121212; 
+      color: #eee; 
+      font-size: 18px; /* increased base font-size */
+    }
+    
+    /* Navigation (visible only when not logged in) */
+    .nav {
+      background: #1f1f1f;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      font-size: 1.2em;
+    }
+    .nav a { 
+      color: #ff4757; 
+      font-weight: bold; 
+      cursor: pointer; 
+    }
+    
+    /* Login Container */
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 30px;
+      background: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .container h1 { text-align: center; margin-bottom: 20px; font-size: 2em; }
+    
+    /* Input Groups with Icons */
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .input-group i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #aaa;
+      font-size: 1.2em;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 12px 10px 12px 40px;
+      border: none;
+      border-radius: 5px;
+      background: #2c2c2c;
+      color: #eee;
+      font-size: 1em;
+    }
+    
+    .container button {
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1em;
+      background: #ff4757;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .container button:hover { background: #e84118; }
+    
+    /* Dashboard Styles */
+    .dashboard {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      padding: 30px;
+      animation: fadeIn 0.5s ease-in;
+    }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1f1f1f;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+    .dashboard-header h2 { 
+      font-size: 2em; 
+    }
+    .dashboard-header .logout {
+      background: #ff4757;
+      padding: 12px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 1em;
+    }
+    .dashboard-header .logout:hover { background: #e84118; }
+    .dashboard-main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 25px;
+      flex: 1 1 300px;
+      min-height: 300px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .card h3 { margin-bottom: 15px; font-size: 1.8em; }
+    
+    /* Videos Container: 2 videos per row */
+    #videosContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    /* Video Card Styles */
+    .video-card {
+      background: #2c2c2c;
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: calc(50% - 15px);
+    }
+    .video-card img {
+      width: 100%;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .video-card .video-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    .video-card button {
+      background: #ff4757;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 1em;
+    }
+    .video-card button:hover {
+      background: #e84118;
+    }
+    
+    /* Modal for Analytics Graph */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal.hidden { display: none; }
+    .modal-content {
+      background: #1e1e1e;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 700px;
+      position: relative;
+    }
+    .modal-content .close {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-size: 1.8em;
+      cursor: pointer;
+      color: #ff4757;
+    }
+    .modal-content #totalVbucks {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+    
+    /* Creator Resources Card Styles */
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 1em;
+    }
+    .card ul li {
+      margin-bottom: 15px;
+    }
+    .card ul li a {
+      color: #ff4757;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .card ul li a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Notifications Card */
+    #notificationsList {
+      list-style: disc;
+      margin-left: 20px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation (only visible when not logged in) -->
+  <div class="nav">
+    <a onclick="showSection('loginSection')"><i class="fas fa-sign-in-alt"></i> Log In</a>
+  </div>
+  
+  <!-- Log-In Section -->
+  <div id="loginSection" class="container">
+    <h1><i class="fas fa-user-circle"></i> Log In</h1>
+    <form onsubmit="return loginUser(event)">
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="loginUsername" placeholder="Email" required />
+      </div>
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="loginPassword" placeholder="Password" required />
+      </div>
+      <button type="submit"><i class="fas fa-sign-in-alt"></i> Log In</button>
+    </form>
+  </div>
+  
+  <!-- Dashboard Section -->
+  <div id="dashboardSection" class="dashboard">
+    <div class="dashboard-header">
+      <h2 id="dashboardGreeting"><i class="fas fa-user"></i> Hello!</h2>
+      <div>
+        <span id="vbucksBalance"><i class="fas fa-coins"></i> 0 V-Bucks</span>
+        &nbsp;&nbsp;
+        <span id="creatorStatus"><i class="fas fa-info-circle"></i> Status</span>
+        &nbsp;&nbsp;
+        <span class="logout" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</span>
+      </div>
+    </div>
+    <div class="dashboard-main">
+      <!-- Videos Card -->
+      <div class="card" style="flex:2;">
+        <h3><i class="fas fa-video"></i> Your Videos</h3>
+        <div id="videosContainer">
+          <!-- Video cards will be inserted here -->
+        </div>
+      </div>
+      <!-- Contact & Info Card -->
+      <div class="card" style="flex:1;">
+        <h3><i class="fas fa-envelope"></i> Contact & Info</h3>
+        <p><strong>Email:</strong> malekplayz123@gmail.com</p>
+        <hr style="margin:15px 0;">
+        <p><strong>Notes:</strong></p>
+        <p id="creatorNotes">No notes available.</p>
+      </div>
+      <!-- Notifications Card -->
+      <div class="card" style="flex:1;">
+        <h3><i class="fas fa-bell"></i> Notifications</h3>
+        <ul id="notificationsList">
+          <!-- Notifications will be inserted here -->
+        </ul>
+      </div>
+      <!-- Creator Resources Card -->
+      <div class="card" style="flex:1;">
+        <h3><i class="fas fa-book"></i> Creator Resources</h3>
+        <ul>
+          <li><a href="#" onclick="showResource('gettingStarted')"><i class="fas fa-play"></i> Getting Started</a></li>
+          <li><a href="#" onclick="showResource('tos')"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+          <li><a href="#" onclick="showResource('privacy')"><i class="fas fa-user-shield"></i> Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for Video Analytics Graph -->
+  <div id="videoModal" class="modal hidden" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <p id="totalVbucks"></p>
+      <canvas id="chartCanvas" width="400" height="300"></canvas>
+    </div>
+  </div>
+  
+  <!-- Modal for Resource Content -->
+  <div id="resourceModal" class="modal hidden" onclick="closeResourceModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <span class="close" onclick="closeResourceModal()">&times;</span>
+      <h2 id="resourceTitle"></h2>
+      <div id="resourceContent" style="line-height: 1.6; margin-top: 15px;"></div>
+    </div>
+  </div>
+  
+  <script>
+    // For demonstration, force reinitialization of sample accounts
+    localStorage.removeItem('users');
+    const sampleUsers = [
+      {
+        id: 1,
+        firstName: "Farid",
+        lastName: "Islam",
+        email: "farid.islam.fedo@gmail.com",
+        password: "1234",
+        status: "Not-Linked",
+        vbucks: 0,
+        videos: [
+          { title: "NO VIDEOS FOUND, PLEASE LINK YOUR ACCOUNT", link: "", vbucksHistory: [0] },        ]
+      },
+      {
+        id: 2,
+        firstName: "Youssef",
+        lastName: "Kabil",
+        email: "bob@example.com",
+        password: "bob123",
+        status: "Not-Linked",
+        vbucks: 0,
+        videos: [
+        { title: "NO VIDEOS FOUND, PLEASE LINK YOUR ACCOUNT", link: "", vbucksHistory: [0] },        ]
+      },
+      {
+        id: 3,
+        firstName: "Salah",
+        lastName: "Mohamed",
+        email: "charlie@example.com",
+        password: "charlie13",
+        status: "Not-Linked",
+        vbucks: 0,
+        videos: [
+        { title: "NO VIDEOS FOUND, PLEASE LINK YOUR ACCOUNT", link: "", vbucksHistory: [0] },        ]
+      },
+      {
+        id: 4,
+        firstName: "Omar",
+        lastName: "Refaie",
+        email: "charlie@example.com",
+        password: "charlie12",
+        status: "Not-Linked",
+        vbucks: 0,
+        videos: [
+        { title: "NO VIDEOS FOUND, PLEASE LINK YOUR ACCOUNT", link: "", vbucksHistory: [0] },        ]
+      },
+      {
+        id: 5,
+        firstName: "Malek",
+        lastName: "Mostafa",
+        email: "malek@gmail.com",
+        password: "malekplayzyttest123",
+        status: "Active",
+        vbucks: 5000,
+        videos: [
+        { title: "Remixed End Game (Official Trailer)", link: "https://www.youtube.com/watch?v=KC4GUoAU6ig&t=1s", vbucksHistory: [200,100,500,70,200,1000,700,530,800,900] },        ]
+      }
+    ];
+    localStorage.setItem('users', JSON.stringify(sampleUsers));
+    
+    /* --- Utility Functions for User Management --- */
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('users')) || [];
+    }
+    function getCurrentUser() {
+      const users = getUsers();
+      const currentUserId = localStorage.getItem('currentUser');
+      return users.find(u => u.id == currentUserId);
+    }
+    function setCurrentUser(id) {
+      localStorage.setItem('currentUser', id);
+    }
+    function clearCurrentUser() {
+      localStorage.removeItem('currentUser');
+    }
+    
+    /* --- Section Toggling --- */
+    function showSection(section) {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('dashboardSection').style.display = 'none';
+      if(section === 'loginSection') {
+        document.querySelector('.nav').style.display = 'block';
+      } else {
+        document.querySelector('.nav').style.display = 'none';
+      }
+      document.getElementById(section).style.display = 'block';
+    }
+    
+    window.onload = function() {
+      if(getCurrentUser()) {
+        loadDashboard();
+        showSection('dashboardSection');
+      } else {
+        showSection('loginSection');
+      }
+    }
+    
+    /* --- Log-In Function (Case‑Insensitive Email Comparison) --- */
+    function loginUser(e) {
+      e.preventDefault();
+      const usernameInput = document.getElementById('loginUsername').value.trim().toLowerCase();
+      const password = document.getElementById('loginPassword').value.trim();
+      const users = getUsers();
+      const user = users.find(u => u.email.toLowerCase() === usernameInput && u.password === password);
+      if(user) {
+        setCurrentUser(user.id);
+        loadDashboard();
+        showSection('dashboardSection');
+      } else {
+        alert('Invalid credentials');
+      }
+      return false;
+    }
+    
+    /* --- Logout Function --- */
+    function logoutUser() {
+      clearCurrentUser();
+      showSection('loginSection');
+    }
+    
+    /* --- Status Icon Function --- */
+    function getStatusIcon(status) {
+      const s = status.toLowerCase();
+      if(s === "active") {
+        return '<i class="fas fa-check-circle" style="color:green;"></i>';
+      } else if(s === "pending") {
+        return '<i class="fas fa-hourglass-half" style="color:orange;"></i>';
+      } else if(s === "rejected") {
+        return '<i class="fas fa-times-circle" style="color:red;"></i>';
+      } else if(s === "not-linked") {
+        return '<i class="fas fa-times-circle" style="color:grey;"></i>';
+      }
+      return '<i class="fas fa-question-circle"></i>';
+    }
+    
+    /* --- Helper Function: Get YouTube Thumbnail --- */
+    function getYoutubeThumbnail(url) {
+      const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      if (match && match[2].length === 11) {
+        return "https://img.youtube.com/vi/" + match[2] + "/hqdefault.jpg";
+      }
+      return "";
+    }
+    
+    /* --- Dashboard Loading --- */
+    function loadDashboard() {
+      const user = getCurrentUser();
+      if(!user) return;
+      document.getElementById('dashboardGreeting').innerHTML = `<i class="fas fa-user"></i> Hello, ${user.firstName}!`;
+      document.getElementById('vbucksBalance').innerHTML = `<i class="fas fa-coins"></i> ${user.vbucks} V-Bucks`;
+      document.getElementById('creatorStatus').innerHTML = getStatusIcon(user.status) + " " + user.status;
+      
+      // Load Videos (each user has their own set of videos)
+      const videosContainer = document.getElementById('videosContainer');
+      videosContainer.innerHTML = "";
+      if(user.videos && user.videos.length > 0) {
+        user.videos.forEach((video, index) => {
+          const videoCard = document.createElement('div');
+          videoCard.className = 'video-card';
+          
+          // Show thumbnail if YouTube video
+          if(video.link.includes("youtube")) {
+            const thumbUrl = getYoutubeThumbnail(video.link);
+            if(thumbUrl) {
+              const img = document.createElement('img');
+              img.src = thumbUrl;
+              img.alt = "Video Thumbnail";
+              videoCard.appendChild(img);
+            }
+          }
+          
+          const titleDiv = document.createElement('div');
+          titleDiv.className = 'video-title';
+          titleDiv.textContent = video.title || "Untitled Video";
+          videoCard.appendChild(titleDiv);
+          
+          const analyticsButton = document.createElement('button');
+          analyticsButton.innerHTML = '<i class="fas fa-chart-line"></i> Check Analytics';
+          analyticsButton.onclick = function() { showVideoGraph(index); };
+          videoCard.appendChild(analyticsButton);
+          
+          videosContainer.appendChild(videoCard);
+        });
+      } else {
+        videosContainer.innerHTML = "<p>No videos available.</p>";
+      }
+      
+      // Update Notifications Card (sample notifications)
+      const notifications = [
+        
+      ];
+      const notificationsList = document.getElementById('notificationsList');
+      notificationsList.innerHTML = "";
+      notifications.forEach(notif => {
+        const li = document.createElement('li');
+        li.textContent = notif;
+        notificationsList.appendChild(li);
+      });
+    }
+    
+    /* --- Video Analytics Modal --- */
+    let currentChart = null;
+    function showVideoGraph(videoIndex) {
+      const user = getCurrentUser();
+      if(!user) return;
+      const video = user.videos[videoIndex];
+      document.getElementById('videoModal').classList.remove('hidden');
+      
+      // Calculate total V-Bucks from video history
+      const totalVbucks = video.vbucksHistory.reduce((acc, val) => acc + val, 0);
+      document.getElementById('totalVbucks').innerHTML = `<i class="fas fa-coins"></i> Total V-Bucks: ${totalVbucks}`;
+      
+      const ctx = document.getElementById('chartCanvas').getContext('2d');
+      if(currentChart) currentChart.destroy();
+      currentChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array.from({length: video.vbucksHistory.length}, (_, i) => i + 1),
+          datasets: [{
+            label: 'V-Bucks Over Time',
+            data: video.vbucksHistory,
+            backgroundColor: 'rgba(255, 71, 87, 0.5)',
+            borderColor: 'rgba(255, 71, 87, 1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+      });
+    }
+    function closeModal() {
+      document.getElementById('videoModal').classList.add('hidden');
+    }
+    
+    /* --- Resource Modal Functions --- */
+    function showResource(resourceType) {
+      let title = "";
+      let content = "";
+      switch(resourceType) {
+        case "gettingStarted":
+          title = "Getting Started";
+          content = `<p>Welcome to the Creator Program Portal! This guide is designed to help you begin your journey as a creator.</p>
+                     <p>Here you can:</p>
+                     <ul>
+                       <li>Access your personal dashboard and track your video performance.</li>
+                       <li>Learn how to optimize your content and maximize your earnings.</li>
+                       <li>Review important policies and resources.</li>
+                     </ul>
+                     <p>Please take some time to explore the portal, and feel free to reach out via our support channels if you have any questions.</p>`;
+          break;
+        case "tos":
+          title = "Terms of Service";
+          content = `<p>By using this Program, you agree to the following Terms of Service:</p>
+                     <ul>
+                       <li>You must comply with all community guidelines and content policies.</li>
+                       <li>You are responsible for ensuring that your content is original and does not infringe on any copyrights.</li>
+                       <li>We reserve the right to modify or terminate your access to the platform at any time.</li>
+                       <li>Your continued use of the portal constitutes acceptance of any changes to these terms.</li>
+                       <li>V-Bucks are not guaranteed, some videos may do better then others and other may not give V-bucks</li>
+                     </ul>
+                     <p>Please review these terms carefully. If you do not agree with any part of these terms, then please dont sign up for the creator program and contact support.</p>`;
+          break;
+        case "privacy":
+          title = "Privacy Policy";
+          content = `<p>By using this Program, you agree to the following Privacy Policy:</p>
+                     <ul>
+                       <li>We only collect the minimal personal information necessary to operate the portal (such as your email and activity data).</li>
+                       <li>All personal data is stored securely and is not shared with third parties without your consent.</li>
+                       <li>We comply with applicable data protection laws and regularly review our security measures.</li>
+                     </ul>
+                     <p>For any questions regarding your privacy or this policy, please contact our support team.</p>`;
+          break;
+        default:
+          title = "Resource";
+          content = "<p>No content available.</p>";
+      }
+      document.getElementById('resourceTitle').innerHTML = title;
+      document.getElementById('resourceContent').innerHTML = content;
+      document.getElementById('resourceModal').classList.remove('hidden');
+    }
+    function closeResourceModal() {
+      document.getElementById('resourceModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
