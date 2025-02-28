@@ -325,12 +325,13 @@
       <button class="nav-button" onclick="showUpdates()">Updates</button>
       <button class="nav-button" onclick="showLeaderboard()">Leaderboard</button>
       <button class="nav-button" onclick="showUpcoming()">Upcoming</button>
+      <button onclick="window.location.href='s.html'" class="nav-button" >Servers</button>
       <button onclick="window.location.href='creatorprogram.html'" class="nav-button" >Creator Program</button>
     </div>
     
     <!-- Global Countdown Banner 
     <div id="globalCountdown" class="global-countdown">
-      <p id="globalCountdownText">Season 2 begins in: Loading countdown...</p>
+      <p id="globalCountdownText">Season 3 begins in: Loading countdown...</p>
     </div>-->
     
     <!-- Update List Section -->
@@ -537,24 +538,24 @@
     
     /* ---------- Leaderboard Functions ---------- */
     const leaderboardData = [
-      { id: 'player1', name: 'VultureDxrk', points: 280, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'player2', name: 'Kabil100098', points: 246, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'player3', name: 'TopLion6492', points: 82, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '4', name: 'clipped-by-salah', points: 301, description: 'an aggressive player who likes to fight a lot', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '5', name: 'lulwa_on_top1', points: 39, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '6', name: 'Youki Shamy', points: 23, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '7', name: 'RealisticElk3877', points: 8, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '8', name: 'Yassin-2508', points: 56, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '9', name: 'KevinMillerPS', points: 234, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '10', name: 'GM_Omar_ID', points: 19, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '11', name: 'greend-dragon', points: 140, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'KevinMillerFriend', name: 'TimGotYa', points: 12, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'o1s', name: 'totalynoto1s', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'cerine', name: 'RappidRoster', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '12', name: 'General_October', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: '13', name: 'golfzilla1252', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'youssefmontaserbrother', name: 'Ghosteyes2', points: 56, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'youssefmontaser', name: 'Ghosteyes', points: 40, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'VultureDxrk', name: '???', points: 337, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'Kabil100098', name: '???', points: 236, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'TopLion6492', name: '???', points: 82, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'clipped-by-salah', name: "???", points: 342, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'lulwa_on_top1', name: '???', points: 39, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'Youki Shamy', name: '???', points: 103, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'RealisticElk3877', name: '???', points: 8, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'Yassin-2508', name: '???', points: 54, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'KevinMillerPS', name: '???', points: 289, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'GM_Omar_ID', name: '???', points: 19, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'greend-dragon', name: '???', points: 140, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'TimGotYa', name: '???', points: 12, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'totalynoto1s', name: '???', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'cerine', name: '???', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'General_October', name: '???', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'golfzilla25', name: '???', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'youssefmontaserbrother', name: '???', points: 56, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
+      { id: 'youssefmontaser', name: '???', points: 40, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
 
 
 
@@ -601,7 +602,7 @@
     
     /* ---------- Upcoming Updates Functions ---------- */
     const upcomingUpdates = [
-      { id: 'up1', title: 'Season 2 - Starfall', description: 'This will include: New POIs, New Guns, New Features, New Bosses, New Medallions, New Augments, a New Gold System, and so much more!', image: 'starfall.png', releaseDate: '2025-02-20T07:00:00Z' },
+      { id: 'up1', title: 'Season 3 - Starfall: The End', description: 'This will include: New POIs, New Guns, New Features, New Bosses, New Medallions, New Augments, a New Gold System, and so much more!', image: 'theend.jpg', releaseDate: '2025-03-02T13:00:00Z' },
     ];
     const upcomingList = document.getElementById('upcomingList');
     upcomingUpdates.forEach(update => {
@@ -669,7 +670,7 @@
     
     /* ---------- Countdown Timer Functionality ---------- */
     let celebrationTriggered = false;
-    const season2ReleaseTime = new Date('2025-02-20T07:00:00Z').getTime();
+    const season2ReleaseTime = new Date('2025-03-02T13:00:00Z').getTime();
     
     function updateCountdowns() {
       const timerElements = document.querySelectorAll('.upcoming-timer');
@@ -695,7 +696,7 @@
       const now = new Date().getTime();
       const diff = season2ReleaseTime - now;
       if(diff <= 0) {
-        globalCountdown.textContent = "Season 2 is here!";
+        globalCountdown.textContent = "Season 3 is here!";
         if(!celebrationTriggered) {
           triggerCelebration();
           celebrationTriggered = true;
@@ -705,7 +706,7 @@
         const hours = Math.floor((diff % (1000*60*60*24))/(1000*60*60));
         const minutes = Math.floor((diff % (1000*60*60))/(1000*60));
         const seconds = Math.floor((diff % (1000*60))/1000);
-        globalCountdown.textContent = `Season 2 begins in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        globalCountdown.textContent = `Season 3 begins in: ${hours}h ${minutes}m ${seconds}s`;
       }
     }
     setInterval(updateGlobalCountdown, 1000);
