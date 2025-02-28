@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Server Status</title>
+  <!-- Google Fonts for typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+        integrity="sha512-pD4Zn0rdPZFTXw8dHkXuC+BMHcgKhcaRV9oR3Tdp3CzA8W48JTPrOOf3uIZ3Rzhd4A9l4HPl2nCjQ3G4E3rZ8A==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* Set CSS Variables for Light Mode (default) */
+    :root {
+      --background: #f1f5f9;
+      --body-text: #333;
+      --card-bg: #fff;
+      --header-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+      --header-text: #fff;
+      --back-button-bg: #3b82f6;
+      --back-container-bg: #111;
+      --shadow-light: rgba(0, 0, 0, 0.1);
+      --shadow-card: rgba(0, 0, 0, 0.08);
+      --operational-color: #10b981;
+      --downtime-bg: #dc2626;
+      --future-header-color: #fff;
+      --future-time: #666;
+      --future-msg: #333;
+    }
+    
+    /* Override for Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #121212;
+        --body-text: #e0e0e0;
+        --card-bg: #1e1e1e;
+        --header-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+        --header-text: #fff;
+        --back-button-bg: #3b82f6;
+        --back-container-bg: #1e1e1e;
+        --shadow-light: rgba(0,0,0,0.6);
+        --shadow-card: rgba(0,0,0,0.6);
+        --operational-color: #10b981;
+        --downtime-bg: #dc2626;
+        --future-header-color: #fff;
+        --future-time: #ccc;
+        --future-msg: #e0e0e0;
+      }
+    }
+
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: var(--background);
+      color: var(--body-text);
+      padding-bottom: 40px;
+    }
+    a {
+      color: inherit;
+    }
+
+    /************************************
+     * BACK BUTTON SECTION
+     ************************************/
+    .back-button-container {
+      background-color: var(--back-container-bg);
+      padding: 20px;
+      text-align: left;
+    }
+    .back-button {
+      background-color: var(--back-button-bg);
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      transition: opacity 0.3s, transform 0.2s;
+    }
+    .back-button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .back-button i {
+      margin-right: 8px;
+    }
+
+    /************************************
+     * HEADER SECTION
+     ************************************/
+    .header {
+      background: var(--header-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px auto 30px;
+      box-shadow: 0 4px 12px var(--shadow-light);
+      max-width: 900px;
+    }
+    .header-title {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--header-text);
+    }
+    .header-title h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    /************************************
+     * SERVER STATUS LIST
+     ************************************/
+    .status-list {
+      max-width: 700px;
+      margin: 0 auto 40px;
+      padding: 0;
+      list-style-type: none;
+    }
+    .status-item {
+      background: var(--card-bg);
+      margin-bottom: 15px;
+      padding: 18px 25px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 8px var(--shadow-card);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .status-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px var(--shadow-light);
+    }
+    .server-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+    }
+    .server-info i {
+      font-size: 22px;
+      color: #3b82f6;
+    }
+    .status-operational {
+      color: var(--operational-color);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+    }
+    .status-operational i {
+      color: var(--operational-color);
+    }
+    .status-downtime {
+      background-color: var(--downtime-bg);
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+    }
+    .status-downtime i {
+      color: #fff;
+    }
+
+    /************************************
+     * FUTURE DOWNTIMES SECTION
+     ************************************/
+    .future-downtimes-section {
+      max-width: 700px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+    .future-downtimes-section h2 {
+      margin: 0 0 15px;
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--header-text);
+    }
+    .future-downtimes-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .future-downtime-item {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 3px 8px var(--shadow-card);
+      padding: 18px 25px;
+      margin-bottom: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .future-downtime-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px var(--shadow-light);
+    }
+    .future-downtime-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--future-header-color);
+    }
+    .future-downtime-header .icon {
+      color: var(--downtime-bg);
+    }
+    .future-downtime-time {
+      color: var(--future-time);
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .future-downtime-message {
+      font-size: 15px;
+      color: var(--future-msg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back Button Container -->
+  <div class="back-button-container">
+    <a href="javascript:history.back()" class="back-button">
+      <i class="fa-solid fa-arrow-left"></i>← Back
+    </a>
+  </div>
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="header-title">
+      <h1 id="page-title">All Systems Operational</h1>
+    </div>
+  </header>
+
+  <!-- Server Status List -->
+  <ul id="statusList" class="status-list"></ul>
+
+  <!-- Future Downtimes Section -->
+  <div id="futureDowntimesSection" class="future-downtimes-section" style="display: none;">
+    <h2>Upcoming Downtime</h2>
+    <ul id="futureDowntimesList" class="future-downtimes-list"></ul>
+  </div>
+
+  <script>
+    /************************************
+     * MAIN SERVER STATUS DATA
+     ************************************/
+    const servers = [
+      {
+        name: "Fortnite",
+        status: "operational",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 6:00 PM"
+      },
+      {
+        name: "Matchmaking",
+        status: "operational",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 6:00 PM"
+      },
+      {
+        name: "Stats and Leaderboards",
+        status: "operational",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 6:00 PM"
+      },
+      {
+        name: "Website",
+        status: "operational",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 6:00 PM"
+      }
+    ];
+
+    /************************************
+     * FUTURE DOWNTIME UPDATES DATA
+     ************************************/
+    const upcomingDowntimes = [
+      {
+        title: "Season 3 Downtime",
+        startTime: "March 1, 12:00 PM",
+        endTime: "March 1, 03:00 PM",
+        message: "Season 3 Lunch"
+      },
+    ];
+
+    /************************************
+     * POPULATE SERVER STATUS LIST
+     ************************************/
+    const statusList = document.getElementById('statusList');
+    const pageTitle = document.getElementById('page-title');
+
+    let anyDowntime = false;
+
+    servers.forEach(server => {
+      const listItem = document.createElement('li');
+      listItem.classList.add('status-item');
+
+      const serverInfo = document.createElement('div');
+      serverInfo.classList.add('server-info');
+
+      const serverIcon = document.createElement('i');
+      serverIcon.classList.add('fa-solid', 'fa-server');
+      serverInfo.appendChild(serverIcon);
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = server.name;
+      serverInfo.appendChild(nameSpan);
+
+      listItem.appendChild(serverInfo);
+
+      if (server.status === 'operational') {
+        const statusSpan = document.createElement('span');
+        statusSpan.classList.add('status-operational');
+        const checkIcon = document.createElement('i');
+        checkIcon.classList.add('fa-solid', 'fa-check');
+        statusSpan.appendChild(checkIcon);
+        statusSpan.appendChild(document.createTextNode(' Operational'));
+        listItem.appendChild(statusSpan);
+      } else if (server.status === 'downtime') {
+        anyDowntime = true;
+        const downtimeSpan = document.createElement('span');
+        downtimeSpan.classList.add('status-downtime');
+        const exclamationIcon = document.createElement('i');
+        exclamationIcon.classList.add('fa-solid', 'fa-exclamation-triangle');
+        downtimeSpan.appendChild(exclamationIcon);
+        downtimeSpan.appendChild(document.createTextNode(` ${server.downtimeMessage || "Downtime Maintenance - No return time specified"}`));
+        listItem.appendChild(downtimeSpan);
+      }
+
+      statusList.appendChild(listItem);
+    });
+
+    if (anyDowntime) {
+      pageTitle.textContent = "Some Systems Experiencing Downtime";
+    }
+
+    /************************************
+     * POPULATE FUTURE DOWNTIMES SECTION
+     ************************************/
+    const futureDowntimesSection = document.getElementById('futureDowntimesSection');
+    const futureDowntimesList = document.getElementById('futureDowntimesList');
+
+    if (upcomingDowntimes.length > 0) {
+      futureDowntimesSection.style.display = 'block';
+
+      upcomingDowntimes.forEach(item => {
+        const li = document.createElement('li');
+        li.classList.add('future-downtime-item');
+
+        const header = document.createElement('div');
+        header.classList.add('future-downtime-header');
+        const icon = document.createElement('i');
+        icon.classList.add('fa-solid', 'fa-calendar-exclamation', 'icon');
+        header.appendChild(icon);
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = item.title;
+        header.appendChild(titleSpan);
+
+        const timeSpan = document.createElement('div');
+        timeSpan.classList.add('future-downtime-time');
+        timeSpan.textContent = `From ${item.startTime} to ${item.endTime}`;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('future-downtime-message');
+        msgDiv.textContent = item.message;
+
+        li.appendChild(header);
+        li.appendChild(timeSpan);
+        li.appendChild(msgDiv);
+
+        futureDowntimesList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
