@@ -1,789 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Game Update Log</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Server Status</title>
+  <!-- Google Fonts for typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+        integrity="sha512-pD4Zn0rdPZFTXw8dHkXuC+BMHcgKhcaRV9oR3Tdp3CzA8W48JTPrOOf3uIZ3Rzhd4A9l4HPl2nCjQ3G4E3rZ8A==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-    /* CSS Variables for Light Mode */
+    /* Set CSS Variables for Light Mode (default) */
     :root {
-      --primary-color: #007bff;
-      --primary-color-dark: #0056b3;
-      --background-color: #f5f7fa;
-      --card-background: #fff;
-      --text-color: #333;
-      --border-color: #e0e0e0;
-      --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
-    }
-    /* Dark Mode Overrides */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --primary-color: #1e90ff;
-        --primary-color-dark: #1c86ee;
-        --background-color: #121212;
-        --card-background: #1e1e1e;
-        --text-color: #e0e0e0;
-        --border-color: #333;
-        --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-      }
+      --background: #f1f5f9;
+      --body-text: #333;
+      --card-bg: #fff;
+      --header-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+      --header-text: #fff;
+      --back-button-bg: #3b82f6;
+      --back-container-bg: #111;
+      --shadow-light: rgba(0, 0, 0, 0.1);
+      --shadow-card: rgba(0, 0, 0, 0.08);
+      --operational-color: #10b981;
+      --downtime-bg: #dc2626;
+      --future-header-color: #fff;
+      --future-time: #666;
+      --future-msg: #333;
     }
     
-    /* Global Reset */
+    /* Override for Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #121212;
+        --body-text: #e0e0e0;
+        --card-bg: #1e1e1e;
+        --header-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+        --header-text: #fff;
+        --back-button-bg: #3b82f6;
+        --back-container-bg: #1e1e1e;
+        --shadow-light: rgba(0,0,0,0.6);
+        --shadow-card: rgba(0,0,0,0.6);
+        --operational-color: #10b981;
+        --downtime-bg: #dc2626;
+        --future-header-color: #fff;
+        --future-time: #ccc;
+        --future-msg: #e0e0e0;
+      }
+    }
+
+    /* Global Styles */
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
     body {
+      margin: 0;
       font-family: 'Roboto', sans-serif;
-      background-color: var(--background-color);
-      color: var(--text-color);
+      background: var(--background);
+      color: var(--body-text);
+      padding-bottom: 40px;
+    }
+    a {
+      color: inherit;
+    }
+
+    /************************************
+     * BACK BUTTON SECTION
+     ************************************/
+    .back-button-container {
+      background-color: var(--back-container-bg);
       padding: 20px;
-      transition: var(--transition);
-    }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.5rem;
-      letter-spacing: 0.05em;
-      color: var(--text-color);
-    }
-    
-    /* Global Countdown Banner */
-    .global-countdown {
-      text-align: center;
-      background: var(--primary-color);
-      color: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 1.2rem;
-      box-shadow: var(--box-shadow);
-    }
-    
-    /* Navigation Buttons */
-    .nav-buttons {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .nav-button {
-      background: var(--primary-color);
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      margin: 0 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: var(--transition);
-    }
-    .nav-button:hover {
-      background: var(--primary-color-dark);
-    }
-    
-    /* Leaderboard Multiplier Display - no background, fixed right */
-    #multiplierDisplay {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 2rem;
-      font-weight: bold;
-      color: white;
-    }
-    
-    /* Update List Styles */
-    .update-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      list-style: none;
-      padding: 0;
-    }
-    .update-item {
-      background: var(--card-background);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-      position: relative;
-    }
-    .update-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-    .update-image {
-      position: relative;
-      height: 200px;
-      background-size: cover;
-      background-position: center;
-    }
-    .update-image::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
-    }
-    .update-title {
-      padding: 15px;
-      font-size: 1.3rem;
-      text-align: center;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-    
-    /* Detail Sections */
-    #updateDetailSection,
-    #leaderboardDetailSection,
-    #upcomingDetailSection {
-      display: none;
-      margin-top: 30px;
+      text-align: left;
     }
     .back-button {
-      background: var(--primary-color);
+      background-color: var(--back-button-bg);
       color: #fff;
-      border: none;
-      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 10px 20px;
       border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: var(--transition);
-      margin-bottom: 20px;
+      display: inline-block;
+      transition: opacity 0.3s, transform 0.2s;
     }
     .back-button:hover {
-      background: var(--primary-color-dark);
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
-    .update-detail {
-      background: var(--card-background);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
+    .back-button i {
+      margin-right: 8px;
+    }
+
+    /************************************
+     * HEADER SECTION
+     ************************************/
+    .header {
+      background: var(--header-bg);
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: var(--box-shadow);
-      display: flex;
-      flex-direction: column;
+      margin: 20px auto 30px;
+      box-shadow: 0 4px 12px var(--shadow-light);
+      max-width: 900px;
     }
-    .update-detail-image {
-      width: 100%;
-      max-height: 350px;
-      object-fit: cover;
-      display: block;
+    .header-title {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--header-text);
     }
-    .detail-text {
-      padding: 20px;
-    }
-    .detail-text h2 {
-      margin-bottom: 20px;
-      font-size: 2rem;
-    }
-    .detail-text h3 {
-      margin-top: 20px;
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-    }
-    .detail-text p {
-      margin-bottom: 15px;
-      line-height: 1.5;
-    }
-    .detail-text ul {
-      margin-left: 20px;
-      margin-bottom: 15px;
-    }
-    .detail-text ul li {
-      margin-bottom: 8px;
-    }
-    
-    /* Leaderboard Styles */
-    .leaderboard-list {
-      list-style: none;
-      padding: 0;
+    .header-title h1 {
       margin: 0;
+      font-size: 32px;
+      font-weight: 700;
     }
-    .leaderboard-item {
+
+    /************************************
+     * SERVER STATUS LIST
+     ************************************/
+    .status-list {
+      max-width: 700px;
+      margin: 0 auto 40px;
+      padding: 0;
+      list-style-type: none;
+    }
+    .status-item {
+      background: var(--card-bg);
+      margin-bottom: 15px;
+      padding: 18px 25px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 8px var(--shadow-card);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .status-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px var(--shadow-light);
+    }
+    .server-info {
       display: flex;
       align-items: center;
-      padding: 10px;
-      border-bottom: 1px solid var(--border-color);
-      cursor: pointer;
-      transition: var(--transition);
+      gap: 12px;
+      font-size: 18px;
     }
-    .leaderboard-item:hover {
-      background: var(--card-background);
+    .server-info i {
+      font-size: 22px;
+      color: #3b82f6;
     }
-    .leaderboard-placement {
-      display: inline-block;
-      width: 50px;
+    .status-operational {
+      color: var(--operational-color);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+    }
+    .status-operational i {
+      color: var(--operational-color);
+    }
+    .status-downtime {
+      background-color: var(--downtime-bg);
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+    }
+    .status-downtime i {
+      color: #fff;
+    }
+
+    /************************************
+     * FUTURE DOWNTIMES SECTION
+     ************************************/
+    .future-downtimes-section {
+      max-width: 700px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+    .future-downtimes-section h2 {
+      margin: 0 0 15px;
+      font-size: 24px;
+      font-weight: 700;
       text-align: center;
-      margin-right: 10px;
-      font-size: 1.2rem;
-      font-weight: bold;
+      color: var(--header-text);
     }
-    .leaderboard-pfp {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 15px;
-      object-fit: cover;
-    }
-    .placement-first { color: gold; }
-    .placement-second { color: silver; }
-    .placement-third { color: #cd7f32; }
-    
-    /* Upcoming Styles */
-    .upcoming-list {
-      list-style: none;
+    .future-downtimes-list {
+      list-style-type: none;
       padding: 0;
       margin: 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
     }
-    .upcoming-item {
-      background: var(--card-background);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
+    .future-downtime-item {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 3px 8px var(--shadow-card);
+      padding: 18px 25px;
+      margin-bottom: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .upcoming-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    .future-downtime-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px var(--shadow-light);
     }
-    .upcoming-timer {
-      display: block;
-      margin: 15px auto;
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
-      padding: 8px 15px;
-      border-radius: 20px;
-      font-size: 1rem;
-      letter-spacing: 1px;
-      font-weight: 500;
-      text-align: center;
-      width: fit-content;
+    .future-downtime-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--future-header-color);
     }
-    
-    /* Responsive Adjustments */
-    @media (max-width: 600px) {
-      .update-image { height: 150px; }
-      .update-title { font-size: 1.1rem; }
-      .detail-text h2 { font-size: 1.8rem; }
-      .back-button { padding: 10px 20px; }
-      .leaderboard-item { padding: 8px; }
-      .leaderboard-pfp { width: 35px; height: 35px; margin-right: 10px; }
-      .leaderboard-placement { width: 40px; font-size: 1rem; }
+    .future-downtime-header .icon {
+      color: var(--downtime-bg);
     }
-    
-    /* Modal Styles for "How to Earn Points" */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.5);
+    .future-downtime-time {
+      color: var(--future-time);
+      font-size: 14px;
+      margin-bottom: 6px;
     }
-    .modal-content {
-      background-color: var(--card-background);
-      margin: 10% auto;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      width: 80%;
-      max-width: 500px;
-      border-radius: 8px;
-      text-align: center;
-      position: relative;
-    }
-    .close-modal {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      color: var(--text-color);
+    .future-downtime-message {
+      font-size: 15px;
+      color: var(--future-msg);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Game Update Log</h1>
-    <!-- Navigation -->
-    <div class="nav-buttons">
-      <button class="nav-button" onclick="showUpdates()">Updates</button>
-      <button class="nav-button" onclick="showLeaderboard()">Leaderboard</button>
-      <button class="nav-button" onclick="showUpcoming()">Upcoming</button>
-      <button onclick="window.location.href='s.html'" class="nav-button" >Servers</button>
-      <button onclick="window.location.href='creatorprogram.html'" class="nav-button" >Creator Program</button>
-    </div>
-    
-    <!-- Global Countdown Banner 
-    <div id="globalCountdown" class="global-countdown">
-      <p id="globalCountdownText">Season 3 begins in: Loading countdown...</p>
-    </div>-->
-    
-    <!-- Update List Section -->
-    <div id="updateListSection">
-      <ul class="update-list" id="updateList">
-        <!-- Update cards will be injected dynamically -->
-      </ul>
-    </div>
-    <!-- Update Detail Section -->
-    <div id="updateDetailSection">
-      <button class="back-button" onclick="goBack()">← Back</button>
-      <div id="updateContent" class="update-detail">
-        <!-- Update detail content will be injected dynamically -->
-      </div>
-    </div>
-    
-    <!-- Leaderboard List Section -->
-    <div id="leaderboardListSection" style="display: none;">
-      <!-- Multiplier Display (positioned fixed on the right) -->
-      <div id="multiplierDisplay">Today's Multiplier: <span id="multiplierValue">2</span></div>
-      <div id="leaderboardHeader" style="margin-bottom: 20px; text-align: center;">
-        <button class="nav-button" onclick="showInstructionsModal()">How to Earn Points</button>
-      </div>
-      <ul class="leaderboard-list" id="leaderboardList">
-        <!-- Leaderboard items will be injected dynamically -->
-      </ul>
-    </div>
-    <!-- Leaderboard Detail Section -->
-    <div id="leaderboardDetailSection" style="display: none;">
-      <button class="back-button" onclick="goBackLeaderboard()">← Back</button>
-      <div id="leaderboardContent" class="update-detail">
-        <!-- Leaderboard detail content will be injected dynamically -->
-      </div>
-    </div>
-    
-    <!-- Upcoming List Section -->
-    <div id="upcomingSection" style="display: none;">
-      <ul class="upcoming-list" id="upcomingList">
-        <!-- Upcoming update cards will be injected dynamically -->
-      </ul>
-    </div>
-    <!-- Upcoming Detail Section -->
-    <div id="upcomingDetailSection" style="display: none;">
-      <button class="back-button" onclick="goBackUpcoming()">← Back</button>
-      <div id="upcomingContent" class="update-detail">
-        <!-- Upcoming update detail content will be injected dynamically -->
-      </div>
-    </div>
+
+  <!-- Back Button Container -->
+  <div class="back-button-container">
+    <a href="javascript:history.back()" class="back-button">
+      <i class="fa-solid fa-arrow-left"></i>← Back
+    </a>
   </div>
-  
-  <!-- Modal for "How to Earn Points" -->
-  <div id="instructionModal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="hideInstructionsModal()">×</span>
-      <h2>How to Earn Points</h2>
-      <p>Earn points by playing the game and getting long shot kills. We’ll also award extra points based on your daily playtime and skill level! (Please note that playing alone does not count.)</p>
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="header-title">
+      <h1 id="page-title">All Systems Operational</h1>
     </div>
+  </header>
+
+  <!-- Server Status List -->
+  <ul id="statusList" class="status-list"></ul>
+
+  <!-- Future Downtimes Section -->
+  <div id="futureDowntimesSection" class="future-downtimes-section" style="display: none;">
+    <h2>Upcoming Downtime</h2>
+    <ul id="futureDowntimesList" class="future-downtimes-list"></ul>
   </div>
-  
-  <!-- Animated Celebration Popup -->
-  
+
   <script>
-    /* ---------- Helper Functions ---------- */
-    function getOrdinal(n) {
-      if (n % 100 >= 11 && n % 100 <= 13) return 'th';
-      switch (n % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
+    /************************************
+     * MAIN SERVER STATUS DATA
+     ************************************/
+    const servers = [
+      {
+        name: "Fortnite",
+        status: "operational",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 6:00 PM"
+      },
+      {
+        name: "Matchmaking",
+        status: "downtime",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 3:00 PM"
+      },
+      {
+        name: "Stats and Leaderboards",
+        status: "downtime",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 3:00 PM"
+      },
+      {
+        name: "Website",
+        status: "operational",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 6:00 PM"
+      },
+      {
+        name: "Creator Program",
+        status: "operational",
+        downtimeMessage: "Downtime Maintenance - Scheduled until 6:00 PM"
+      },
+    ];
+
+    /************************************
+     * FUTURE DOWNTIME UPDATES DATA
+     ************************************/
+    const upcomingDowntimes = [
+      {
+        title: "NA",
+        startTime: "NA",
+        endTime: "NA",
+        message: "NA"
+      },
+    ];
+
+    /************************************
+     * POPULATE SERVER STATUS LIST
+     ************************************/
+    const statusList = document.getElementById('statusList');
+    const pageTitle = document.getElementById('page-title');
+
+    let anyDowntime = false;
+
+    servers.forEach(server => {
+      const listItem = document.createElement('li');
+      listItem.classList.add('status-item');
+
+      const serverInfo = document.createElement('div');
+      serverInfo.classList.add('server-info');
+
+      const serverIcon = document.createElement('i');
+      serverIcon.classList.add('fa-solid', 'fa-server');
+      serverInfo.appendChild(serverIcon);
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = server.name;
+      serverInfo.appendChild(nameSpan);
+
+      listItem.appendChild(serverInfo);
+
+      if (server.status === 'operational') {
+        const statusSpan = document.createElement('span');
+        statusSpan.classList.add('status-operational');
+        const checkIcon = document.createElement('i');
+        checkIcon.classList.add('fa-solid', 'fa-check');
+        statusSpan.appendChild(checkIcon);
+        statusSpan.appendChild(document.createTextNode(' Operational'));
+        listItem.appendChild(statusSpan);
+      } else if (server.status === 'downtime') {
+        anyDowntime = true;
+        const downtimeSpan = document.createElement('span');
+        downtimeSpan.classList.add('status-downtime');
+        const exclamationIcon = document.createElement('i');
+        exclamationIcon.classList.add('fa-solid', 'fa-exclamation-triangle');
+        downtimeSpan.appendChild(exclamationIcon);
+        downtimeSpan.appendChild(document.createTextNode(` ${server.downtimeMessage || "Downtime Maintenance - No return time specified"}`));
+        listItem.appendChild(downtimeSpan);
       }
+
+      statusList.appendChild(listItem);
+    });
+
+    if (anyDowntime) {
+      pageTitle.textContent = "Some Systems Experiencing Downtime";
     }
-    
-    /* ---------- Modal Functions ---------- */
-    function showInstructionsModal() {
-      document.getElementById('instructionModal').style.display = 'block';
-    }
-    function hideInstructionsModal() {
-      document.getElementById('instructionModal').style.display = 'none';
-    }
-    
-    /* ---------- Updates Data & Functions ---------- */
-    const updates = {
-      update9: {
-        title: 'Season 3 - Season Update',
-        sections: [
-          { header: "New Guns/Items:", content: "Striker AR", content2: "Hamer AR", content3: "Gatekeeper Shotgun", content4: "Ranger Shotgun", content5: "Combat SMG", content6: "Falcon Eye Sniper", content7: "Kneecapped", content8: "Shockwave hammer" },
-          { header: "Vaulted Guns:", content: "Havoc Suppressed AR", content2: "Collateral Damage Assault Rifle", content3: "Thunder Shotgun", content4: "Maven Shotgun", content5: "Twin Mag SMG", content6: "Mammoth Pistol", content7: "Ranger Pistol", content8: "Slurp", content9: "Flowbary Fizz", content10: "Grappler", content11: "Rocket Ram", content12: "Smock Grande",content13: "Pulse Scanner",},
-          { header: "Current Lootpoll:", content: "Ranger AR", content1: "Striker AR", content100: "Hamer AR", content2: "Pump Shotgun", content3: "Gatekeeper Shotgun", content4: "Ranger Shotgun", content11: "Combat SMG", content12: "Suppressed Pistol", content5: "Falcon Eye Sniper", content13: "Big Pot", content14: "Mini's", content6: "Medkit", content15: "Chug Jug", content7: "Gold Chung Splash", content8: "Med-Mist Smoke Grenade", content9: "Thermite", content16: "Kneecapped", content10: "Shockwave hammer", content17: "Grapple Blade", content18: "Crashpad JR",content18: "Shockwaves", content19: "Shield Keg",},
-          { header: "New POI's:", content: "Starfall Crater", content2: "Pipeline Pit", ontent3: "Rusted Agency",},
-          { header: "Vaulted POI's:", content: "Shipment X", content2: "Jungle Base" },
-          { header: "New Systems:", content: "Shop System: After 90 Seconds after the game has started a shop will open that will contain Good Loot That you can purchase for Gold or Diamonds", content2: "Gold System: When Opening a Chest, Supply Drop, Lama, or Bomb you will have a chance of geting gold witch can be spent at the shop", content3:"Story System: Track your story quests for live events and other cool stuff",content4: ""  },
-          { header: "New Cars:", content: "Dirt Bike", },
-          { header: "Vaulted Cars:", content: "ATK" },
-          { header: "Shop Contains:", content: "Mythic Shockwave Hammer", content2: "Legendary Striker AR", content3: "Legendary Falcon Eye Sniper" }
-        ],
-        image: 'theend.jpg'
-      },
-      update8: {
-        title: 'Season 2 - XP Update',
-        sections: [
-           {header: "XP Update:", content: "You Can Now Earn EXTRA XP!",},
-           {header: "Bug Fixes:", content: "Name Tag Bug",content2: "Flag Bug",content3: "Rift Point Bug Where you get loot early",},
-        ],
-        image: 'rxp.png'
-      },
-      update7: {
-        title: 'Creator Program - Launch',
-        sections: [
-           {header: "Earn V-bucks:", content: "Earn V-Bucks by making content on the map, for more info go to the new tab",},
-        ],
-        image: 'vbucks.png'
-      },
-        update6: {
-        title: 'Season 2 - Content Update',
-        sections: [
-           {header: "Ballistic Gear Comes To Starfall:"},
-           {header: "New Fetures:", content: "New Vault System: Search Cheasts and Find Thermite, Throw The Thermite At the Vault to Start The Robbary System, Damage the weak spots ont he Vault to Open it", content2: "Ballistic System: Search Cheasts for an Ultra Rare Bomb From Ballistic, Search for a Flag Around The Map to Place your Bomb, if you wait for over 30 Seconds and no one comes to Clear Out The Bomb, You get Exotic/Mythic Loot, Watch out and dont get so close to the bomb or ealse you will take 100 Damage",},
-           {header: "New Items:", content: "Thermite", content2: "Mythic Mammoth Pistol", content3: "Mythic Collateral Damage Assault Rifle", content4: "Mythic Suppressed Pistol", content5: "Exotic Twin Mag SMG", content6: "Exotic Mavaen Shotgun",},
-        ],
-        image: 'ballistic.png'
-      },
-        update5: {
-        title: 'Season 2 -  Lootpool Update',
-        sections: [
-           {header: "New Guns/Items:", content: "Collateral Damage Assault Rifle", content2: "Suppressed Pistol",content3: "Gold Splash", content4: "Med-Mist Smoke Grenade", content5: "Pulse Scanner",},
-        ],
-        image: 'lootpoolupdate.png'
-      },
-        
-        update4: {
-        title: 'Season 2 - Bug Fixes',
-        sections: [
-           {header: "Bug Fixes:", content: "Vault Bug", content2: "Amo Create Bug",content2: "Name Tag Bug" },
-        ],
-        image: 'bugfix.png'
-      },
-        
-      update3: {
-        title: 'Season 2 - Season Update',
-        sections: [
-          { header: "New Guns/Items:", content: "Ranger AR", content2: "Havoc Suppressed AR", content3: "Thunder Shotgun", content4: "Maven Shotgun", content5: "Ranger Pistol", content6: "Slurp", content7: "Grapple Blade", content8: "Grapler", content9: "Rocket Ram", content10: "Smock Grande" },
-          { header: "Vaulted Guns:", content: "Nemesis AR", content2: "Combat AR", content3: "Charge Shotgun", content4: "Rail Gun", content5: "Blade", content6: "Rift", content7: "Flowbary", content8: "Remote Explosive", content9: "Impulse Grenade", content10: "Lunch Pad" },
-          { header: "Current Lootpoll:", content: "Ranger AR", content2: "Pump Shotgun", content3: "Thunder Shotgun", content4: "Maven Shotgun", content11: "Twin Mag SMG", content12: "Mammoth Pistol", content5: "Ranger Pistol", content13: "Big Pot", content14: "Mini's", content6: "Slurp", content15: "Flowbary Fizz", content7: "Grapple Blade", content8: "Grapler", content9: "Rocket Ram", content16: "Shockwave", content10: "Smock Grande", content17: "Crash-Pad JR" },
-          { header: "New POI's:", content: "Shipment X", content2: "Light House", content3: "Sniper House" },
-          { header: "Vaulted POI's:", content: "Castle X", content2: "Slapy Gas" },
-          { header: "New Systems:", content: "New Supply Drops System", content2: "New Lama System" },
-          { header: "New Bosses:", content: "The Car Worker Boss - Mythic Havoc AR", content2: "The Shipment X Boss - Mythic Ranger AR - Vault Key Card" },
-          { header: "Vault Contains:", content: "7 Normal Chests", content2: "1 Lama" },
-          { header: "Supply Drop Contains:", content: "50% Rare Gun", content2: "35% Epic Gun", content3: "15% Legendary Gun", content4: "100% Healing Item", content5: "100% Mobility Item", content6: "200 Wood, Brick, Metal" }
-        ],
-        image: 'starfall.png'
-      },
-      
-      update2: {
-        title: 'Season 1 - Lootpool Update',
-        sections: [
-          { header: "New Guns/Items:", content: "Impulse Grenade", content2: "Mammoth Pistol", content3: "Crash-pad JR", content4: "Remote Explosive" },
-          { header: "Nerfed:", content: "Rail Gun | 5% chance to 3% chance", content2: "Big Pot | 17.5% chance to 14% chance", content3: "Mini's | 17.5% chance to 14% chance", content4: "Flowbary | 17.5% chance to 14% chance", content5: "Flowbary Fizz | 17.5% chance to 14% chance", content6: "Blade | 17.5% chance to 10% chance" },
-          { header: "Chance:", content: "Mammoth Pistol | 3% chance Epic", content2: "Mammoth Pistol | 1% chance Legendary" }
-        ],
-        image: 'update1.png'
-      },
-      update1: {
-        title: 'Season 1 - Game Launch',
-        sections: [
-          { header: "New Guns/Items:", content: "Combat AR", content2: "Nemesis AR", content3: "Charge Shotgun", content4: "Pump Shotgun", content5: "Rail Gun", content6: "Twin Mag SMG", content7: "Big Pot", content8: "Mini's", content9: "Flowbary", content10: "Flowbary Fizz", content11: "Blade", content12: "Lunch Pad", content13: "Rift", content14: "Shockwave" },
-          { header: "New POI's:", content: "Slapy Gas", content2: "Broken Hotel", content3: "Mini Corol Castle", content4: "Tilted Clock", content5: "Jungle Base", content6: "Ruined Reals", content7: "Castle X" },
-          { header: "New Bosses:", content: "Ghost Boss: Mythic Charge Shotgun - Mythic Nemesis AR" }
-        ],
-        image: 'm.png'
-      }
-    };
-    
-    const updateList = document.getElementById('updateList');
-    for (const key in updates) {
-      if (updates.hasOwnProperty(key)) {
-        const update = updates[key];
+
+    /************************************
+     * POPULATE FUTURE DOWNTIMES SECTION
+     ************************************/
+    const futureDowntimesSection = document.getElementById('futureDowntimesSection');
+    const futureDowntimesList = document.getElementById('futureDowntimesList');
+
+    if (upcomingDowntimes.length > 0) {
+      futureDowntimesSection.style.display = 'block';
+
+      upcomingDowntimes.forEach(item => {
         const li = document.createElement('li');
-        li.className = 'update-item';
-        li.onclick = () => showUpdate(key);
-        const imgDiv = document.createElement('div');
-        imgDiv.className = 'update-image';
-        imgDiv.style.backgroundImage = `url('${update.image}')`;
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'update-title';
-        titleDiv.textContent = update.title;
-        li.appendChild(imgDiv);
-        li.appendChild(titleDiv);
-        updateList.appendChild(li);
-      }
-    }
-    
-    function showUpdate(updateId) {
-      const update = updates[updateId];
-      let html = `<img class="update-detail-image" src="${update.image}" alt="${update.title}">
-                  <div class="detail-text">
-                    <h2>${update.title}</h2>`;
-      update.sections.forEach(section => {
-        html += `<h3>${section.header}</h3>`;
-        const contentKeys = Object.keys(section).filter(key => key.startsWith("content") && section[key]);
-        if (contentKeys.length > 1) {
-          html += '<ul>';
-          contentKeys.forEach(key => { html += `<li>${section[key]}</li>`; });
-          html += '</ul>';
-        } else if (contentKeys.length === 1) {
-          html += `<p>${section[contentKeys[0]]}</p>`;
-        }
+        li.classList.add('future-downtime-item');
+
+        const header = document.createElement('div');
+        header.classList.add('future-downtime-header');
+        const icon = document.createElement('i');
+        icon.classList.add('fa-solid', 'fa-calendar-exclamation', 'icon');
+        header.appendChild(icon);
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = item.title;
+        header.appendChild(titleSpan);
+
+        const timeSpan = document.createElement('div');
+        timeSpan.classList.add('future-downtime-time');
+        timeSpan.textContent = `From ${item.startTime} to ${item.endTime}`;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('future-downtime-message');
+        msgDiv.textContent = item.message;
+
+        li.appendChild(header);
+        li.appendChild(timeSpan);
+        li.appendChild(msgDiv);
+
+        futureDowntimesList.appendChild(li);
       });
-      html += `</div>`;
-      document.getElementById('updateContent').innerHTML = html;
-      document.getElementById('updateListSection').style.display = 'none';
-      document.getElementById('updateDetailSection').style.display = 'block';
-    }
-    function goBack() {
-      document.getElementById('updateDetailSection').style.display = 'none';
-      document.getElementById('updateListSection').style.display = 'block';
-    }
-    
-    /* ---------- Leaderboard Functions ---------- */
-    const leaderboardData = [
-      { id: 'VultureDxrk', name: '???', points: 435, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'Kabil100098', name: '???', points: 452, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'TopLion6492', name: '???', points: 82, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'clipped-by-salah', name: "???", points: 342, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'lulwa_on_top1', name: '???', points: 39, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'Youki Shamy', name: '???', points: 103, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'RealisticElk3877', name: '???', points: 8, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'Yassin-2508', name: '???', points: 54, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'KevinMillerPS', name: '???', points: 289, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'GM_Omar_ID', name: '???', points: 19, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'greend-dragon', name: '???', points: 211, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'TimGotYa', name: '???', points: 12, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'totalynoto1s', name: '???', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'cerine', name: '???', points: 3, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'General_October', name: '???', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'golfzilla25', name: '???', points: 83, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'youssefmontaserbrother', name: '???', points: 56, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'youssefmontaser', name: '???', points: 40, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-      { id: 'omar', name: '???', points: 354, description: 'nothing found...', profilePic: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' },
-
-
-
-
-    ];
-    const leaderboardList = document.getElementById('leaderboardList');
-    const sortedLeaderboard = leaderboardData.slice().sort((a, b) => b.points - a.points);
-    sortedLeaderboard.forEach((player, index) => {
-      const li = document.createElement('li');
-      li.className = 'leaderboard-item';
-      li.onclick = () => showLeaderboardDetail(player.id);
-      const placementSpan = document.createElement('span');
-      placementSpan.className = 'leaderboard-placement';
-      placementSpan.textContent = `${index + 1}${getOrdinal(index + 1)}`;
-      if (index === 0) placementSpan.classList.add('placement-first');
-      else if (index === 1) placementSpan.classList.add('placement-second');
-      else if (index === 2) placementSpan.classList.add('placement-third');
-      const img = document.createElement('img');
-      img.src = player.profilePic;
-      img.alt = player.name;
-      img.className = 'leaderboard-pfp';
-      const infoDiv = document.createElement('div');
-      infoDiv.innerHTML = `<strong>${player.name}</strong> - ${player.points} pts`;
-      li.appendChild(placementSpan);
-      li.appendChild(img);
-      li.appendChild(infoDiv);
-      leaderboardList.appendChild(li);
-    });
-    
-    function showLeaderboardDetail(playerId) {
-      const player = leaderboardData.find(p => p.id === playerId);
-      let html = `<div class="detail-text">
-                    <h2>${player.name}</h2>
-                    <p><strong>Points:</strong> ${player.points}</p>
-                    <p>${player.description}</p>
-                  </div>`;
-      document.getElementById('leaderboardContent').innerHTML = html;
-      document.getElementById('leaderboardListSection').style.display = 'none';
-      document.getElementById('leaderboardDetailSection').style.display = 'block';
-    }
-    function goBackLeaderboard() {
-      document.getElementById('leaderboardDetailSection').style.display = 'none';
-      document.getElementById('leaderboardListSection').style.display = 'block';
-    }
-    
-    /* ---------- Upcoming Updates Functions ---------- */
-    const upcomingUpdates = [
-      { id: 'up1', title: 'Season 3 - Starfall: The End', description: 'This will include: New POIs, New Guns, New Features, New Bosses, New Medallions, New Augments, a New Gold System, and so much more!', image: 'theend.jpg', releaseDate: '2025-03-02T13:00:00Z' },
-    ];
-    const upcomingList = document.getElementById('upcomingList');
-    upcomingUpdates.forEach(update => {
-      const li = document.createElement('li');
-      li.className = 'upcoming-item';
-      li.onclick = () => showUpcomingDetail(update.id);
-      const imgDiv = document.createElement('div');
-      imgDiv.className = 'update-image';
-      imgDiv.style.backgroundImage = `url('${update.image}')`;
-      const titleDiv = document.createElement('div');
-      titleDiv.className = 'update-title';
-      titleDiv.textContent = update.title;
-      const timerP = document.createElement('p');
-      timerP.className = 'upcoming-timer';
-      timerP.setAttribute('data-release', update.releaseDate);
-      timerP.textContent = 'Loading timer...';
-      li.appendChild(imgDiv);
-      li.appendChild(titleDiv);
-      li.appendChild(timerP);
-      upcomingList.appendChild(li);
-    });
-    
-    function showUpcomingDetail(upId) {
-      const update = upcomingUpdates.find(u => u.id === upId);
-      let html = `<img class="update-detail-image" src="${update.image}" alt="${update.title}">
-                  <div class="detail-text">
-                    <h2>${update.title}</h2>
-                    <p>${update.description}</p>
-                    <p class="upcoming-timer" data-release="${update.releaseDate}">Loading timer...</p>
-                  </div>`;
-      document.getElementById('upcomingContent').innerHTML = html;
-      document.getElementById('upcomingSection').style.display = 'none';
-      document.getElementById('upcomingDetailSection').style.display = 'block';
-    }
-    function goBackUpcoming() {
-      document.getElementById('upcomingDetailSection').style.display = 'none';
-      document.getElementById('upcomingSection').style.display = 'block';
-    }
-    
-    /* ---------- Navigation Functions ---------- */
-    function showUpdates() {
-      document.getElementById('updateListSection').style.display = 'block';
-      document.getElementById('updateDetailSection').style.display = 'none';
-      document.getElementById('leaderboardListSection').style.display = 'none';
-      document.getElementById('leaderboardDetailSection').style.display = 'none';
-      document.getElementById('upcomingSection').style.display = 'none';
-      document.getElementById('upcomingDetailSection').style.display = 'none';
-    }
-    function showLeaderboard() {
-      document.getElementById('updateListSection').style.display = 'none';
-      document.getElementById('updateDetailSection').style.display = 'none';
-      document.getElementById('leaderboardListSection').style.display = 'block';
-      document.getElementById('leaderboardDetailSection').style.display = 'none';
-      document.getElementById('upcomingSection').style.display = 'none';
-      document.getElementById('upcomingDetailSection').style.display = 'none';
-    }
-    function showUpcoming() {
-      document.getElementById('updateListSection').style.display = 'none';
-      document.getElementById('updateDetailSection').style.display = 'none';
-      document.getElementById('leaderboardListSection').style.display = 'none';
-      document.getElementById('leaderboardDetailSection').style.display = 'none';
-      document.getElementById('upcomingSection').style.display = 'block';
-      document.getElementById('upcomingDetailSection').style.display = 'none';
-    }
-    
-    /* ---------- Countdown Timer Functionality ---------- */
-    let celebrationTriggered = false;
-    const season2ReleaseTime = new Date('2025-03-02T13:00:00Z').getTime();
-    
-    function updateCountdowns() {
-      const timerElements = document.querySelectorAll('.upcoming-timer');
-      timerElements.forEach(el => {
-        const releaseTime = new Date(el.getAttribute('data-release')).getTime();
-        const now = new Date().getTime();
-        const diff = releaseTime - now;
-        if (diff <= 0) {
-          el.textContent = 'Released!';
-        } else {
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-          el.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        }
-      });
-    }
-    setInterval(updateCountdowns, 1000);
-    
-    function updateGlobalCountdown() {
-      const globalCountdown = document.getElementById('globalCountdownText');
-      const now = new Date().getTime();
-      const diff = season2ReleaseTime - now;
-      if(diff <= 0) {
-        globalCountdown.textContent = "Season 3 is here!";
-        if(!celebrationTriggered) {
-          triggerCelebration();
-          celebrationTriggered = true;
-        }
-      } else {
-        const days = Math.floor(diff / (1000*60*60*24));
-        const hours = Math.floor((diff % (1000*60*60*24))/(1000*60*60));
-        const minutes = Math.floor((diff % (1000*60*60))/(1000*60));
-        const seconds = Math.floor((diff % (1000*60))/1000);
-        globalCountdown.textContent = `Season 3 begins in: ${hours}h ${minutes}m ${seconds}s`;
-      }
-    }
-    setInterval(updateGlobalCountdown, 1000);
-    
-    /* ---------- Leaderboard Multiplier Functions ---------- */
-    let currentMultiplier = 2; // Starting multiplier
-    function updateMultiplierDisplay() {
-      const multiplierEl = document.getElementById('multiplierValue');
-      multiplierEl.textContent = currentMultiplier;
-      // Only change the number color (no background)
-      if (currentMultiplier === 1) {
-        multiplierEl.style.background = "none";
-        multiplierEl.style.color = "Grey"; // Grey
-      } else if (currentMultiplier === 2) {
-        multiplierEl.style.background = "none";
-        multiplierEl.style.color = "Gold"; // Silver
-      } else if (currentMultiplier === 3) {
-        multiplierEl.style.background = "none";
-        multiplierEl.style.color = "#FFD700"; // Gold
-      } else if (currentMultiplier >= 4 && currentMultiplier <= 5) {
-        // For gradient text, use background clip technique.
-        multiplierEl.style.background = "linear-gradient(45deg, #8A2BE2, #DA70D6)";
-        multiplierEl.style.webkitBackgroundClip = "text";
-        multiplierEl.style.color = "transparent";
-      }
-    }
-    updateMultiplierDisplay();
-    
-    /* ---------- Celebration Functions (Explosion + Animated Popup) ---------- */
-    function triggerCelebration() {
-      // Trigger confetti explosion for 12 seconds.
-      const duration = 12000;
-      const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 50, spread: 500, ticks: 100, zIndex: 1000 };
-  
-      function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-  
-      const interval = setInterval(function() {
-        const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) {
-          clearInterval(interval);
-          // After explosion, show the animated popup after a brief delay.
-          setTimeout(showCelebrationPopup, 500);
-          return;
-        }
-        const particleCount = 100 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { 
-          particleCount, 
-          origin: { x: randomInRange(0, 1), y: Math.random() - 0.2 }
-        }));
-      }, 200);
-    }
-    
-    function showCelebrationPopup() {
-      const popup = document.getElementById('celebrationPopup');
-      popup.style.display = 'block';
-    }
-    
-    function closeCelebrationPopup() {
-      document.getElementById('celebrationPopup').style.display = 'none';
     }
   </script>
 </body>
