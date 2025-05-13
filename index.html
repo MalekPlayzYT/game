@@ -36,6 +36,285 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 20px; height: var(--nav-height);
     }
+    .logo {
+      font-size: 1.8rem; font-weight: 500;
+      color: var(--primary);
+    }
+    nav { display: flex; gap: 15px; }
+    .nav-button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+    .nav-button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Container & Sections */
+    .container {
+      max-width: var(--max-width);
+      margin: 80px auto 40px auto;
+      padding: 0 20px;
+    }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Updates */
+    #updateList {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(280px, 1fr));
+      gap: 20px;
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+    .update-item {
+      background: #1c1c1c;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .update-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+    }
+    .update-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .update-image::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50px;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    }
+    .update-title {
+      padding: 20px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+      background: #2c2c2c;
+      color: #fff;
+    }
+    #updateDetail { margin-top: 30px; display: none; }
+
+    .update-hero {
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      border-radius: 16px;
+      height: 400px;
+      margin-top: 20px;
+    }
+    .update-hero-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; color: #fff; padding: 20px;
+    }
+    .update-hero-overlay h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+    .back-button {
+      position: absolute; top: 20px; left: 20px;
+      background: none; border: none; color: #fff;
+      font-size: 2rem; cursor: pointer; z-index: 9999;
+    }
+    .back-button:hover { color: #ddd; }
+
+    .section-block {
+      background-color: rgba(255,255,255,0.05);
+      padding: 25px;
+      margin: 25px 0;
+      border-radius: 12px;
+    }
+    .section-block h2 {
+      margin-bottom: 1rem;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    .three-col-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+    .three-col-list li {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 12px 16px; color: #fff; font-size: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-align: center; position: relative;
+    }
+    .three-col-list li::before {
+      content: "✦";
+      font-size: 1.2rem;
+      margin-right: 8px;
+      color: #fff;
+      position: static;
+    }
+    .three-col-list li:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+    }
+
+    /* Upcoming */
+    #upcomingList {
+      list-style: none; padding: 0; margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .upcoming-item {
+      background: #1c1c1c;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .upcoming-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+    }
+    .upcoming-image { height: 200px; background-size: cover; background-position: center; }
+    .upcoming-title {
+      padding: 20px; font-size: 1.4rem; text-align: center; background: #2c2c2c; color: #fff;
+    }
+    .upcoming-timer {
+      display: block; width: fit-content; margin: 10px auto 20px auto;
+      padding: 8px 16px; font-size: 1.1rem;
+      background: linear-gradient(45deg, #444, #222); color: #fff;
+      border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    #upcomingDetail { display: none; margin-top: 30px; }
+
+    /* Jobs */
+    #jobList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px; list-style: none; padding: 0; margin-top: 20px;
+    }
+    .job-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .job-item:hover { transform: translateY(-5px); }
+    .job-title { font-size: 1.2rem; font-weight: 500; margin-bottom: 10px; color: var(--primary); }
+    .job-desc { margin-bottom: 10px; opacity: 0.9; }
+    .job-detail {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; box-shadow: var(--shadow);
+      padding: 20px; margin-top: 20px;
+    }
+    .job-detail h2 { color: var(--primary); margin-bottom: 10px; }
+    .job-detail ul { list-style: none; margin: 10px 0; padding: 0; }
+    .job-detail ul li {
+      margin: 5px 0; padding-left: 15px; position: relative;
+    }
+    .job-detail ul li::before {
+      content: "•"; position: absolute; left: 0; color: var(--primary);
+    }
+    .tos-section, .quiz-section, .result-section {
+      margin-top: 20px; background: #222; border-radius: 8px; padding: 15px;
+    }
+    .tos-section label {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer;
+    }
+    .tos-section p { font-size: 0.9rem; line-height: 1.4; opacity: 0.9; }
+    .quiz-question { margin-top: 10px; font-weight: 500; }
+    .quiz-options { margin-top: 10px; }
+    .quiz-options button {
+      display: block; background: #333; border: none; border-radius: 6px;
+      padding: 10px; color: #fff; margin: 6px 0; width: 100%; text-align: left;
+      cursor: pointer; transition: var(--transition);
+    }
+    .quiz-options button:hover { background: #444; }
+    .quiz-options button:disabled {
+      opacity: 0.6; cursor: not-allowed;
+    }
+    .result-section {
+      margin-top: 20px; padding: 15px; background: #111;
+      border: 1px solid #444; border-radius: 6px;
+    }
+    .discord-link { color: #0f9; font-weight: 600; text-decoration: underline; }
+
+    /* Back to Top */
+    .back-to-top {
+      position: fixed; bottom: 30px; right: 30px;
+      background: var(--primary); color: #fff;
+      padding: 10px 15px; border-radius: 50%;
+      cursor: pointer; box-shadow: var(--shadow);
+      transition: var(--transition); z-index: 1200;
+    }
+    .back-to-top:hover {
+      background: var(--primary-dark);
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 1000px) {
+      #updateList, #upcomingList {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+    }
+    @media (max-width: 600px) {
+      .update-image, .upcoming-image { height: 150px; }
+      .update-title, .upcoming-title { font-size: 1rem; }
+      .update-hero { height: 250px; }
+      .update-hero-overlay h1 { font-size: 1.8rem; }
+      .back-button { font-size: 1.5rem; top: 10px; left: 10px; }
+      .three-col-list {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      }
+    }
+
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: var(--background);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* Header & Nav */
+    header {
+      position: sticky; top: 0; z-index: 1000;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+    }
+    .nav-container {
+      max-width: var(--max-width); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: var(--nav-height);
+    }
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
     .logo {
@@ -392,37 +671,47 @@
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       }
     }
+
+    /*TIMER*/
+
     
+
+
   </style>
 </head>
 <body>
   <header>
     <div class="nav-container">
-      <b><div class="logo">             Powered By Endgame Entertainments             </div></b>
+      <div class="logo"><b>Powerd By Endgame Entertainments</b></div>
       <nav>
         <button class="nav-button" onclick="showSection('updatesSection')">Updates</button>
         <button class="nav-button" onclick="showSection('upcomingSection')">Upcoming</button>
+        <button class="nav-button" onclick="showSection('jobsSection')">Apply to Work</button>
         <button class="nav-button" onclick="window.location.href='s.html'">System</button>
-        <!-- <button class="nav-button" onclick="showSection('jobsSection')">Apply to Work</button> -->
       </nav>
     </div>
   </header>
 
+  <div id="timer-container">
+    <span id="countdown"></span>
+</div>
+
   <div class="container">
-    <!-- ========== Updates Section ========== -->
+    <!-- Updates Section -->
     <div id="updatesSection" class="section active">
       <h1>Updates</h1>
       <ul id="updateList"></ul>
       <div id="updateDetail"></div>
     </div>
 
-    <!-- ========== Upcoming Section ========== -->
+    <!-- Upcoming Section -->
     <div id="upcomingSection" class="section">
       <h1>Upcoming</h1>
       <ul id="upcomingList"></ul>
+      <div id="upcomingDetail"></div>
     </div>
 
-    <!-- ========== Jobs Section ========== -->
+    <!-- Jobs Section -->
     <div id="jobsSection" class="section">
       <h1>Available Jobs</h1>
       <ul id="jobList"></ul>
@@ -430,52 +719,22 @@
     </div>
   </div>
 
-  <!-- "Back to Top" Button -->
   <div class="back-to-top" onclick="scrollToTop()">↑</div>
 
-  <!-- Modal Popup for Items -->
-  <div id="itemPopup" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="hideItemPopup()">&times;</span>
-      <img id="itemPopupImage" src="" alt="Item Image">
-      <h2 id="itemPopupName"></h2>
-      <p id="itemPopupDesc"></p>
-    </div>
-  </div>
-
-  <b><div class="logotwo">© [2025] [Endgame Entertainments]</div></b> 
+  <b><div class="logotwo">© [2025] [Endgame Entertainments]</div></b>
 
   <script>
-    function showSection(secId){
-      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-      document.getElementById(secId).classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    
+    /* Navigation */
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      scrollToTop();
     }
-    function scrollToTop(){ window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-    /* ------------------ Item Images & Descriptions Mapping ------------------ */
-    const itemImages = {
-      "Striker AR": "striker.png",
-      "Hamer AR": "hamer.jpg",
-      "Gatekeeper Shotgun": "gate.png",
-      "Ranger Shotgun": "ranger_shotgun.jpg",
-      "Combat SMG": "combat_smg.jpg",
-      "Falcon Eye Sniper": "falcon_eye_sniper.jpg",
-      "Kneecapped": "kneecapped.jpg",
-      "Shockwave hammer": "shockwave_hammer.jpg",
-      "Starfall Crater": "starfall_crater.jpg",
-      "Pipeline Pit": "pipeline_pit.jpg",
-      "Rusted Agency": "rusted_agency.jpg"
-      // Add more mappings as needed...
-    };
-
-    const itemDescriptions = {
-      "Striker AR": "A high damage automatic rifle for aggressive gameplay.",
-
-      // Add more descriptions as needed...
-    };
-
-    /* ------------------ 1) UPDATES DATA & FUNCTIONS ------------------ */
+    /* Updates Data */
     const updates = {
       update12: {
   title: 'Duos Launch',
@@ -730,125 +989,129 @@
     };
 
     function injectUpdates(){
-      const listEl = document.getElementById('updateList');
-      listEl.innerHTML = '';
-      for(const key in updates){
-        if(updates.hasOwnProperty(key)){
-          const upd = updates[key];
-          const li = document.createElement('li');
-          li.className = 'update-item';
-          li.onclick = ()=>showUpdateDetail(key);
-          const imgDiv = document.createElement('div');
-          imgDiv.className='update-image';
-          imgDiv.style.backgroundImage=`url('${upd.image}')`;
-          const titleDiv = document.createElement('div');
-          titleDiv.className='update-title';
-          titleDiv.textContent=upd.title;
-          li.appendChild(imgDiv);
-          li.appendChild(titleDiv);
-          listEl.appendChild(li);
-        }
+      const ul = document.getElementById('updateList');
+      ul.innerHTML = '';
+      for (let key in updates) {
+        const u = updates[key];
+        const li = document.createElement('li');
+        li.className = 'update-item';
+        li.onclick = () => showUpdateDetail(key);
+        const img = document.createElement('div');
+        img.className = 'update-image';
+        img.style.backgroundImage = `url('${u.image}')`;
+        const title = document.createElement('div');
+        title.className = 'update-title';
+        title.textContent = u.title;
+        li.appendChild(img);
+        li.appendChild(title);
+        ul.appendChild(li);
       }
     }
-
-    function showUpdateDetail(updateId){
-      const upd = updates[updateId];
+    function showUpdateDetail(key){
+      const u = updates[key];
       let html = `
-        <div class="update-hero" style="background-image:url('${upd.image}')">
+        <div class="update-hero" style="background-image:url('${u.image}')">
           <button class="back-button" onclick="hideUpdateDetail()">←</button>
-          <div class="update-hero-overlay">
-            <h1>${upd.title}</h1>
-          </div>
+          <div class="update-hero-overlay"><h1>${u.title}</h1></div>
         </div>
       `;
-      upd.sections.forEach(sec=>{
+      u.sections.forEach(sec=>{
         html += `<div class="section-block">
-          <h2>${sec.header}</h2>
-        `;
-        const cKeys = Object.keys(sec).filter(k=>k.startsWith('content'));
-        if(cKeys.length>1){
+          <h2>${sec.header}</h2>`;
+        const c = Object.keys(sec).filter(k=>k.startsWith('content'));
+        if (c.length>1){
           html += `<ul class="three-col-list">`;
-          cKeys.forEach(k=>{ 
-            html += `<li onclick="showItemPopup('${sec[k]}')">${sec[k]}</li>`;
-          });
+          c.forEach(k=> html+=`<li>${sec[k]}</li>`);
           html += `</ul>`;
-        } else if(cKeys.length===1){
-          html += `<p onclick="showItemPopup('${sec[cKeys[0]]}')">${sec[cKeys[0]]}</p>`;
+        } else {
+          html += `<p>${sec[c[0]]}</p>`;
         }
         html += `</div>`;
       });
-      const detailEl = document.getElementById('updateDetail');
-      detailEl.innerHTML = html;
-      detailEl.style.display='block';
+      const det = document.getElementById('updateDetail');
+      det.innerHTML = html;
+      det.style.display='block';
+      document.getElementById('updateList').style.display='grid';
       document.getElementById('updateList').style.display='none';
-      window.scrollTo({ top: 0, behavior:'smooth' });
+      scrollToTop();
     }
     function hideUpdateDetail(){
       document.getElementById('updateDetail').style.display='none';
       document.getElementById('updateList').style.display='grid';
-      window.scrollTo({ top: 0, behavior:'smooth' });
+      scrollToTop();
     }
 
-    /* ------------------ Popup Functions ------------------ */
-    function showItemPopup(itemName) {
-      const popup = document.getElementById("itemPopup");
-      const popupImage = document.getElementById("itemPopupImage");
-      const popupName = document.getElementById("itemPopupName");
-      const popupDesc = document.getElementById("itemPopupDesc");
-      // Get image from mapping or use fallback "nah.png"
-      const imageUrl = itemImages[itemName] || "nah.png";
-      popupImage.src = imageUrl;
-      popupName.textContent = itemName;
-      // Get description or use an empty string if not found
-      popupDesc.textContent = itemDescriptions[itemName] || "";
-      popup.style.display = "block";
-    }
-    function hideItemPopup() {
-      document.getElementById("itemPopup").style.display = "none";
-    }
-
-    /* ------------------ 2) UPCOMING DATA & FUNCTIONS ------------------ */
+    /* Upcoming Data */
     const upcomingData = [
       {
         id:'u1',
-        title:'Season 5',
+        title:'Season 5 - Season Update',
+        description:'This update will include new POIs such as Fencing Hills Witch will be a POI in the NEW Jungle/Wilds Biome, This update will also include some unvalutes such as the Thunder Shotgun and returning guns such as the Pump Shotgun, this update will inlude a new mythical blade that is like the infinity blade but more fun and more over powered',
         image:'season5.png',
-        releaseDate:'2025-05-15T09:00:00Z'
-      }
+        releaseDate:'2025-05-15T09:30:00Z'
+      },
+      {
+        id:'u2',
+        title:'Season 5 - New Blade',
+        description:'This Blade Is A Made By A Fragment From Ancient Time, no one knows how it works, but every one knows that its really overpowered! This Seasonal update will inlude a new mythical blade that is like the infinity blade but more fun and more over powered ',
+        image:'op.png',
+        releaseDate:'2025-05-15T09:30:00Z'
+      },
     ];
-
     function injectUpcoming(){
-      const upList = document.getElementById('upcomingList');
-      upList.innerHTML='';
+      const ul = document.getElementById('upcomingList');
+      ul.innerHTML='';
       upcomingData.forEach(u=>{
         const li = document.createElement('li');
         li.className='upcoming-item';
-        const imgDiv = document.createElement('div');
-        imgDiv.className='update-image';
-        imgDiv.style.backgroundImage=`url('${u.image}')`;
-        const titleDiv = document.createElement('div');
-        titleDiv.className='update-title';
-        titleDiv.textContent=u.title;
+        li.onclick = () => showUpcomingDetail(u.id);
+        const img = document.createElement('div');
+        img.className='upcoming-image';
+        img.style.backgroundImage = `url('${u.image}')`;
+        const title = document.createElement('div');
+        title.className='upcoming-title';
+        title.textContent = u.title;
         const timer = document.createElement('p');
         timer.className='upcoming-timer';
         timer.setAttribute('data-release',u.releaseDate);
         timer.textContent='Loading timer...';
-        li.appendChild(imgDiv);
-        li.appendChild(titleDiv);
+        li.appendChild(img);
+        li.appendChild(title);
         li.appendChild(timer);
-        upList.appendChild(li);
+        ul.appendChild(li);
       });
     }
-
+    function showUpcomingDetail(id){
+      const u = upcomingData.find(x=>x.id===id);
+      let html = `
+        <div style="position:relative;margin-top:20px;">
+          <button class="back-button" onclick="hideUpcomingDetail()">←</button>
+          <img src="${u.image}" alt="${u.title}" style="width:100%;border-radius:12px;">
+          <div style="padding:20px;background:var(--card-bg);border-radius:0 0 12px 12px;box-shadow:var(--shadow);">
+            <h2>${u.title}</h2>
+            <p>${u.description}</p>
+            <p class="upcoming-timer" data-release="${u.releaseDate}">Loading timer...</p>
+          </div>
+        </div>
+      `;
+      const det = document.getElementById('upcomingDetail');
+      det.innerHTML = html;
+      det.style.display='block';
+      document.getElementById('upcomingList').style.display='none';
+      scrollToTop();
+    }
+    function hideUpcomingDetail(){
+      document.getElementById('upcomingDetail').style.display='none';
+      document.getElementById('upcomingList').style.display='grid';
+      scrollToTop();
+    }
     function updateCountdowns(){
-      const timers = document.querySelectorAll('.upcoming-timer');
-      timers.forEach(t=>{
+      document.querySelectorAll('.upcoming-timer').forEach(t=>{
         const rel = new Date(t.getAttribute('data-release')).getTime();
         const now = Date.now();
         const diff = rel-now;
-        if(diff<=0){
-          t.textContent='Released!';
-        } else {
+        if(diff<=0) t.textContent='Released!';
+        else {
           const d = Math.floor(diff/(1000*60*60*24));
           const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
           const m = Math.floor((diff%(1000*60*60))/(1000*60));
@@ -859,360 +1122,141 @@
       setTimeout(updateCountdowns,1000);
     }
 
-    /* ------------------ 3) JOB SYSTEM (7-Day Lockout + No Changing Answers) ------------------ */
-
+    /* Jobs Data */
     const jobs = [
-  {
-    id: 'leadDevs',
-    title: '💡 Lead Developers',
-    shortDesc: 'Supervise development projects, ensure coding quality, and mentor developers.',
-    responsibilities: [
-      'Supervise development projects and coordinate developers.',
-      'Ensure coding standards, quality, and deadlines are met.',
-      'Mentor developers, providing technical guidance and support.'
-    ],
-    requirements: [
-      "Age: 13+",
-      "3+ Months of Working at Endgame Entertainments",
-      'Proven leadership and strong technical skills',
-      'Be Able to Monitor All Staff Members'
-    ],
-    quiz: [
+      
       {
-        question: 'What is a key responsibility of a Lead Developer?',
-        choices: ['Handle server maintenance', 'Supervise projects and ensure code quality', 'Design game maps', 'Moderate the Discord community'],
-        correctIndex: 1
-      },
-      {
-        question: 'Which skill is most essential for a Lead Developer?',
-        choices: ['Coding proficiency', 'Leadership and mentoring', 'Art design skills', 'Community engagement'],
-        correctIndex: 1
+        id:'leadDevs',
+        title:'💡 Developer',
+        shortDesc:'Create And Manage The Game Updates',
+        responsibilities:[
+          'Supervise development projects and coordinate developers.',
+          'Ensure coding standards, quality, and deadlines are met.',
+          'Mentor developers with technical guidance.'
+        ],
+        requirements:[
+          '6+ Months in Creative 1.0 Experience.',
+          'At Least of 24 Hours Of Creative Per Week',
+          'Team management experience.'
+        ],
+        quiz:[
+          {
+            question:'What is a key responsibility of a Developer?',
+            choices:['Manage servers','Supervise projects & ensure code quality','Design maps','Moderate Discord'],
+            correctIndex:1
+          },
+          {
+            question:'Which skill is essential for a Developer?',
+            choices:['Coding only','Leadership & mentoring','Art design','Community events'],
+            correctIndex:1
+          }
+        ],
+        discordLink:'https://discord.gg/rNFZe6yERZ'
       }
-    ],
-    discordLink: 'https://discord.gg/rNFZe6yERZ'
-  },
-  {
-    id: 'mapManagers',
-    title: '🛠️ Map Managers',
-    shortDesc: 'Create and maintain the map and coordinate testing',
-    responsibilities: [
-      'Create and maintain game maps.',
-      'Coordinate map testing, gather feedback, and manage updates.',
-      'Ensure the stability and quality of all maps.'
-    ],
-    requirements: [
-      'Experience in level design or map creation.',
-    ],
-    quiz: [
-      {
-        question: 'What is the main duty of a Map Manager?',
-        choices: ['Manage loot distributions', 'Create and update game maps', 'Write code', 'Supervise training sessions'],
-        correctIndex: 1
-      },
-      {
-        question: 'Which skill is most important for a Map Manager?',
-        choices: ['Expertise in graphic design software', 'Ability to incorporate feedback and ensure map stability', 'Advanced programming', 'Marketing'],
-        correctIndex: 1
-      }
-    ],
-    discordLink: 'https://discord.gg/rNFZe6yERZ'
-  },
-  {
-    id: 'lootManagers',
-    title: '🎯 Loot-Pool Managers',
-    shortDesc: 'Control and balance loot distributions while maintaining game balance.',
-    responsibilities: [
-      'Control and balance loot distributions within the map.',
-      'Adjust and manage in-game items and weapon availability.',
-      'Ensure game balance is maintained consistently.'
-    ],
-    requirements: [
-      'Strong understanding of game mechanics and balancing principles.',
-      'Experience with in-game economy or item balancing.',
-      'Attention to detail in system adjustments.'
-    ],
-    quiz: [
-      {
-        question: 'What is the primary responsibility of a Loot-Pool Manager?',
-        choices: ['Designing maps', 'Balancing loot and item distributions', 'Coding new features', 'Managing community events'],
-        correctIndex: 1
-      },
-      {
-        question: 'What should a Loot-Pool Manager focus on?',
-        choices: ['Visual aesthetics', 'Game balance and fairness', 'Player communication', 'Server performance'],
-        correctIndex: 1
-      }
-    ],
-    discordLink: 'https://discord.gg/rNFZe6yERZ'
-  },
-  {
-    id: 'feedbackManagers',
-    title: '📋 Feedback Managers',
-    shortDesc: 'Collect and analyze feedback, then communicate issues to developers.',
-    responsibilities: [
-      'Collect, analyze, and prioritize player and trainer feedback.',
-      'Clearly communicate issues and suggestions to developers and trainers.',
-      'Track progress and effectiveness of implemented feedback.'
-    ],
-    requirements: [
-      'Strong analytical and communication skills.',
-      'Experience in user research or data analysis.',
-      'Ability to manage and interpret large amounts of feedback.'
-    ],
-    quiz: [
-      {
-        question: 'What is the primary role of a Feedback Manager?',
-        choices: ['Writing code', 'Collecting and analyzing feedback', 'Designing maps', 'Managing Discord channels'],
-        correctIndex: 1
-      },
-      {
-        question: 'Which skill is most crucial for a Feedback Manager?',
-        choices: ['Technical programming skills', 'Analytical and communication skills', 'Graphic design', 'Advanced scripting'],
-        correctIndex: 1
-      }
-    ],
-    discordLink: 'https://discord.gg/rNFZe6yERZ'
-  },
-  {
-    id: 'scriptManagers',
-    title: '🧩 Script Managers',
-    shortDesc: 'Oversee scripting tasks, develop features, and troubleshoot issues.',
-    responsibilities: [
-      'Oversee scripting tasks, including creating and maintaining scripts.',
-      'Develop all features and functions on the map.',
-      'Troubleshoot technical issues related to scripts and tools.'
-    ],
-    requirements: [
-      'Extensive experience in scripting (e.g., C++, Lua, etc.).',
-      'Strong problem-solving and debugging skills.',
-      'Ability to work under pressure and meet deadlines.'
-    ],
-    quiz: [
-      {
-        question: 'What is a key responsibility of a Script Manager?',
-        choices: ['Designing interfaces', 'Creating and maintaining game scripts', 'Moderating Discord', 'Managing loot'],
-        correctIndex: 1
-      },
-      {
-        question: 'Which quality is most important for a Script Manager?',
-        choices: ['Creative writing', 'Attention to technical detail and debugging', 'Public speaking', 'Art design'],
-        correctIndex: 1
-      }
-    ],
-    discordLink: 'https://discord.gg/rNFZe6yERZ'
-  },
-  {
-    id: 'discordManagers',
-    title: '🌍 Discord Managers',
-    shortDesc: 'Maintain Discord server structure and ensure a secure community.',
-    responsibilities: [
-      'Maintain server structure, roles, channels, and organization.',
-      'Handle all the trainers.',
-      'Ensure the Discord community is running smoothly and securely.'
-    ],
-    requirements: [
-      'Experience in managing large Discord communities.',
-      'Knowledge of Discord bots, moderation tools, and best practices.',
-      'Excellent organizational and communication skills.'
-    ],
-    quiz: [
-      {
-        question: 'What is the main responsibility of a Discord Manager?',
-        choices: ['Designing maps', 'Maintaining Discord server structure and roles', 'Writing code', 'Managing game updates'],
-        correctIndex: 1
-      },
-      {
-        question: 'Which skill is most crucial for a Discord Manager?',
-        choices: ['Technical coding skills', 'Knowledge of Discord moderation tools and bots', 'Graphic design', 'Public relations'],
-        correctIndex: 1
-      }
-    ],
-    discordLink: 'https://discord.gg/rNFZe6yERZ'
-  },
-  {
-    id: 'trainers',
-    title: '🔗 Trainers',
-    shortDesc: 'Conduct training sessions, mentor new players, and enhance team skills.',
-    responsibilities: [
-      'Conduct regular training sessions focusing on skill and strategy improvement.',
-      'Evaluate trainee performance and provide constructive feedback.',
-      'Help new players adapt, develop, and achieve team standards.'
-    ],
-    requirements: [
-      'Strong knowledge of game mechanics and strategies.',
-      'Excellent communication and teaching skills.',
-      'Ability to motivate and mentor players effectively.'
-    ],
-    quiz: [
-      {
-        question: 'What is the primary role of a Trainer?',
-        choices: ['Managing server operations', 'Conducting training sessions and mentoring players', 'Coding new features', 'Designing game maps'],
-        correctIndex: 1
-      },
-      {
-        question: 'Which skill is most important for a Trainer?',
-        choices: ['Advanced programming', 'Communication and teaching', 'Graphic design', 'Server management'],
-        correctIndex: 1
-      }
-    ],
-    discordLink: 'https://discord.gg/rNFZe6yERZ'
-  }
-];
-
-
-    const userAnswers={};
+      // Add other roles here similarly...
+    ];
+    const userAnswers = {};
 
     function injectJobs(){
-      const list = document.getElementById('jobList');
-      list.innerHTML='';
+      const ul = document.getElementById('jobList');
+      ul.innerHTML='';
       jobs.forEach(j=>{
-        const li=document.createElement('li');
+        const li = document.createElement('li');
         li.className='job-item';
-        li.onclick=()=>showJobDetail(j.id);
-        const t=document.createElement('div');
-        t.className='job-title';
-        t.textContent=j.title;
-        const d=document.createElement('div');
-        d.className='job-desc';
-        d.textContent=j.shortDesc;
-        li.appendChild(t);
-        li.appendChild(d);
-        list.appendChild(li);
+        li.onclick = ()=>showJobDetail(j.id);
+        const t = document.createElement('div');
+        t.className='job-title'; t.textContent=j.title;
+        const d = document.createElement('div');
+        d.className='job-desc'; d.textContent=j.shortDesc;
+        li.appendChild(t); li.appendChild(d);
+        ul.appendChild(li);
       });
     }
-
-    function showJobDetail(jobId){
-      const job=jobs.find(x=>x.id===jobId);
-      if(!job)return;
-      const cont=document.getElementById('jobDetailContainer');
-      /* check cooldown */
-      const failKey=`failCooldown_${jobId}`;
-      const failTs=localStorage.getItem(failKey);
-      let lockedOut=false; let lockedMsg='';
-      if(failTs){
-        const ft=parseInt(failTs,10);
-        const now=Date.now();
-        if(now<ft){
-          lockedOut=true;
-          const diff=ft-now;
-          const dd=Math.floor(diff/(1000*60*60*24));
-          const hh=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-          lockedMsg=`You cannot reapply for this job for another ${dd}d ${hh}h.`;
-        }
+    function showJobDetail(id){
+      const job = jobs.find(x=>x.id===id);
+      if(!job) return;
+      const cont = document.getElementById('jobDetailContainer');
+      const failKey = `failCooldown_${id}`;
+      const failTs = localStorage.getItem(failKey);
+      let locked=false, lockedMsg='';
+      if(failTs && Date.now()<parseInt(failTs,10)){
+        const diff=parseInt(failTs,10)-Date.now();
+        const d=Math.floor(diff/(1000*60*60*24)), h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+        locked=true; lockedMsg=`Reapply in ${d}d ${h}h.`;
       }
-      let html=`
-      <div class="job-detail">
-        <h2>${job.title}</h2>
+      let html = `<div class="job-detail"><h2>${job.title}</h2>
         <strong>Responsibilities:</strong>
         <ul>${job.responsibilities.map(r=>`<li>${r}</li>`).join('')}</ul>
         <strong>Requirements:</strong>
-        <ul>${job.requirements.map(r=>`<li>${r}</li>`).join('')}</ul>
-      `;
-      if(lockedOut){
-        html+=`
-          <div class="result-section">
-            <h3>Cooldown in effect</h3>
-            <p>${lockedMsg}</p>
-          </div>
-        </div>`;
+        <ul>${job.requirements.map(r=>`<li>${r}</li>`).join('')}</ul>`;
+      if(locked){
+        html+=`<div class="result-section"><h3>Cooldown</h3><p>${lockedMsg}</p></div></div>`;
       } else {
         html+=`
           <div class="tos-section">
-            <p><strong>Terms of Service:</strong><br>
-            By applying, you agree to follow all server rules and responsibilities.</p>
-            <label>
-              <input type="checkbox" id="tosCheck"> I agree to the TOS
-            </label>
-            <button class="nav-button smaller" onclick="startQuiz('${job.id}')">I want this job</button>
+            <p><strong>TOS:</strong> By applying you agree to all rules.</p>
+            <label><input type="checkbox" id="tosCheck"> I agree to the TOS</label>
+            <button class="nav-button smaller" onclick="startQuiz('${id}')">I want this job</button>
           </div>
           <div id="quizSection" class="quiz-section" style="display:none;"></div>
           <div id="resultSection" class="result-section" style="display:none;"></div>
         </div>`;
       }
-      cont.innerHTML=html;
-      window.scrollTo({top:cont.offsetTop,behavior:'smooth'});
+      cont.innerHTML = html;
+      scrollToTop();
     }
-
-    function startQuiz(jobId){
-      const tos=document.getElementById('tosCheck');
-      if(!tos.checked){
-        alert('You must agree to the TOS first.');
-        return;
+    function startQuiz(id){
+      if(!document.getElementById('tosCheck').checked){
+        return alert('Agree to TOS first.');
       }
-      const job=jobs.find(x=>x.id===jobId);
-      if(!job)return;
-      const quizSec=document.getElementById('quizSection');
-      quizSec.style.display='block';
-      quizSec.innerHTML='';
-      job.quiz.forEach((q,qIdx)=>{
-        const qDiv=document.createElement('div');
-        qDiv.className='quiz-question';
-        qDiv.textContent=`Q${qIdx+1}: ${q.question}`;
-        quizSec.appendChild(qDiv);
-        const opts=document.createElement('div');
-        opts.className='quiz-options';
-        q.choices.forEach((choice,cIdx)=>{
-          const btn=document.createElement('button');
-          btn.textContent=choice;
-          btn.onclick=()=>{
-            disableQuestionButtons(opts); /* lock all choices for this Q */
-            selectAnswer(jobId,qIdx,cIdx);
+      const job = jobs.find(x=>x.id===id);
+      const sec = document.getElementById('quizSection');
+      sec.style.display='block'; sec.innerHTML='';
+      job.quiz.forEach((q,qi)=>{
+        const qDiv = document.createElement('div');
+        qDiv.className='quiz-question'; qDiv.textContent=`Q${qi+1}: ${q.question}`;
+        sec.appendChild(qDiv);
+        const opts = document.createElement('div'); opts.className='quiz-options';
+        q.choices.forEach((c,ci)=>{
+          const btn = document.createElement('button');
+          btn.textContent=c;
+          btn.onclick = ()=>{
+            disableQuestionButtons(opts);
+            selectAnswer(id,qi,ci);
           };
           opts.appendChild(btn);
         });
-        quizSec.appendChild(opts);
+        sec.appendChild(opts);
       });
     }
-
-    /* Once an answer is picked for that question, disable all buttons so user can't change. */
     function disableQuestionButtons(container){
-      const btns=container.querySelectorAll('button');
-      btns.forEach(b=>{
-        b.disabled=true;
-        b.style.opacity='0.6';
-        b.style.cursor='not-allowed';
+      container.querySelectorAll('button').forEach(b=>{
+        b.disabled=true; b.style.opacity='0.6'; b.style.cursor='not-allowed';
       });
     }
-
-    function selectAnswer(jobId,qIdx,cIdx){
+    function selectAnswer(jobId,qIdx,choiceIdx){
       if(!userAnswers[jobId]) userAnswers[jobId]=[];
-      userAnswers[jobId][qIdx]=cIdx;
+      userAnswers[jobId][qIdx]=choiceIdx;
       checkIfQuizComplete(jobId);
     }
-
     function checkIfQuizComplete(jobId){
-      const job=jobs.find(x=>x.id===jobId);
-      const answers=userAnswers[jobId]||[];
-      if(answers.length<job.quiz.length)return; // not all answered
-      if(answers.some(a=>a===undefined))return; // incomplete
-      let allCorrect=true;
-      for(let i=0;i<job.quiz.length;i++){
-        if(answers[i]!==job.quiz[i].correctIndex){
-          allCorrect=false; break;
-        }
-      }
-      const res=document.getElementById('resultSection');
+      const job = jobs.find(x=>x.id===jobId);
+      const ans = userAnswers[jobId]||[];
+      if(ans.length<job.quiz.length || ans.some(a=>a===undefined)) return;
+      const res = document.getElementById('resultSection');
       res.style.display='block';
+      const allCorrect = job.quiz.every((q,i)=>ans[i]===q.correctIndex);
       if(allCorrect){
-        res.innerHTML=`
-          <h3>All answers correct! 🎉</h3>
-          <p>Congrats, you passed <strong>${job.title}</strong>!</p>
-          <p><a class="discord-link" href="${job.discordLink}" target="_blank">Join Discord</a></p>
-        `;
+        res.innerHTML=`<h3>Passed! 🎉</h3>
+          <p><a class="discord-link" href="${job.discordLink}" target="_blank">Join Discord</a></p>`;
       } else {
-        /* set 7-day cooldown in localStorage */
-        const failKey=`failCooldown_${jobId}`;
-        const cooldownEnd=Date.now()+(7*24*60*60*1000);
-        localStorage.setItem(failKey,cooldownEnd.toString());
-        res.innerHTML=`
-          <h3>Some answers were incorrect.</h3>
-          <p>You have failed the quiz. You cannot reapply for 7 days.</p>
-        `;
+        const failKey = `failCooldown_${jobId}`;
+        localStorage.setItem(failKey, (Date.now()+7*24*60*60*1000).toString());
+        res.innerHTML=`<h3>Failed.</h3><p>Cannot reapply for 7 days.</p>`;
       }
     }
 
-    /* On load, set default section, inject data, start countdown. */
-    window.onload=function(){
+    window.onload = function(){
       showSection('updatesSection');
       injectUpdates();
       injectUpcoming();
