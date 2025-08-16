@@ -1,1373 +1,252 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Endgame Entertainments</title>
-  <style>
-    :root {
-      --primary: #007bff;
-      --primary-dark: #0056b3;
-      --background: #000000;
-      --card-bg: #1a1a1a;
-      --text: #f0f0f0;
-      --border: #333;
-      --shadow: 0 6px 18px rgba(0,0,0,0.8);
-      --transition: all 0.3s ease;
-      --nav-height: 70px;
-      --max-width: 1200px;
-    }
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background: var(--background);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-    a { text-decoration: none; color: inherit; }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Leaderboard</title>
+<meta name="color-scheme" content="dark">
+<style>
+  /* ========= Liquid Glass — Dark Only ========= */
+  :root{
+    --bg: #0a0d13;
+    --ink: #eaf0ff;
+    --muted:#a6b0c6;
+    --line: rgba(255,255,255,.18);
+    --radius: 18px;
+    --shadow: 0 20px 60px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; color:var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    background:
+      radial-gradient(900px 900px at 80% -20%, rgba(110,168,254,.25), transparent 60%),
+      radial-gradient(900px 900px at -20% 120%, rgba(123,218,167,.22), transparent 60%),
+      var(--bg);
+    overflow-x:hidden;
+  }
+  .blob{position:fixed; filter: blur(80px); opacity:.5; z-index:-1;}
+  .b1{top:-10vh; left:-10vw; width:60vw; height:60vh; background:#6ea8fe33; border-radius:50%;}
+  .b2{bottom:-15vh; right:-10vw; width:55vw; height:55vh; background:#7bdaa733; border-radius:40% 60% 50% 50% / 50% 35% 65% 50%;}
+  .wrap{max-width:1080px; margin:0 auto; padding:28px 20px;}
 
-    /* Header & Nav */
-    header {
-      position: sticky; top: 0; z-index: 1000;
-      background: var(--card-bg);
-      box-shadow: var(--shadow);
-    }
-    .nav-container {
-      max-width: var(--max-width); margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; height: var(--nav-height);
-    }
-    .logo {
-      font-size: 1.8rem; font-weight: 500;
-      color: var(--primary);
-    }
-    nav { display: flex; gap: 15px; }
-    .nav-button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: var(--transition);
-      box-shadow: var(--shadow);
-    }
-    .nav-button:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
+  .glass{
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
 
-    /* Container & Sections */
-    .container {
-      max-width: var(--max-width);
-      margin: 80px auto 40px auto;
-      padding: 0 20px;
-    }
-    .section { display: none; }
-    .section.active { display: block; }
+  /* ——— Top bar (search + stats) ——— */
+  .bar{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin:0 0 20px}
+  .pill{display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.05)}
+  input{
+    padding:12px 14px; border-radius:999px; border:1px solid var(--line);
+    background:rgba(255,255,255,.05); color:var(--ink); outline:none; min-width:280px;
+  }
+  input:focus{box-shadow:0 0 0 6px rgba(110,168,254,.20)}
+  .stats{display:flex; gap:10px; flex-wrap:wrap}
+  .stat{padding:10px 14px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.04)}
+  .stat .lbl{font-size:12px; color:var(--muted)}
+  .stat .val{font-weight:700; font-variant-numeric: tabular-nums}
 
-    /* Updates */
-    #updateList {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(280px, 1fr));
-      gap: 20px;
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-    .update-item {
-      background: #1c1c1c;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .update-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
-    }
-    .update-image {
-      height: 200px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
-    .update-image::after {
-      content: "";
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 50px;
-      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-    }
-    .update-title {
-      padding: 20px;
-      font-size: 1.4rem;
-      font-weight: 600;
-      text-align: center;
-      background: #2c2c2c;
-      color: #fff;
-    }
-    #updateDetail { margin-top: 30px; display: none; }
-
-    .update-hero {
-      position: relative;
-      background-size: cover;
-      background-position: center;
-      border-radius: 16px;
-      height: 400px;
-      margin-top: 20px;
-    }
-    .update-hero-overlay {
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.55);
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      text-align: center; color: #fff; padding: 20px;
-    }
-    .update-hero-overlay h1 {
-      font-size: 2.8rem;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-    }
-    .back-button {
-      position: absolute; top: 20px; left: 20px;
-      background: none; border: none; color: #fff;
-      font-size: 2rem; cursor: pointer; z-index: 9999;
-    }
-    .back-button:hover { color: #ddd; }
-
-    .section-block {
-      background-color: rgba(255,255,255,0.05);
-      padding: 25px;
-      margin: 25px 0;
-      border-radius: 12px;
-    }
-    .section-block h2 {
-      margin-bottom: 1rem;
-      font-size: 1.6rem;
-      font-weight: 600;
-    }
-    .three-col-list {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      list-style: none;
-      padding: 0;
-      margin: 1rem 0;
-    }
-    .three-col-list li {
-      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      padding: 12px 16px; color: #fff; font-size: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      text-align: center; position: relative;
-    }
-    .three-col-list li::before {
-      content: "✦";
-      font-size: 1.2rem;
-      margin-right: 8px;
-      color: #fff;
-      position: static;
-    }
-    .three-col-list li:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.6);
-    }
-
-    /* Upcoming */
-    #upcomingList {
-      list-style: none; padding: 0; margin-top: 20px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(280px, 1fr));
-      gap: 20px;
-    }
-    .upcoming-item {
-      background: #1c1c1c;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .upcoming-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
-    }
-    .upcoming-image { height: 200px; background-size: cover; background-position: center; }
-    .upcoming-title {
-      padding: 20px; font-size: 1.4rem; text-align: center; background: #2c2c2c; color: #fff;
-    }
-    .upcoming-timer {
-      display: block; width: fit-content; margin: 10px auto 20px auto;
-      padding: 8px 16px; font-size: 1.1rem;
-      background: linear-gradient(45deg, #444, #222); color: #fff;
-      border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      text-align: center;
-    }
-    #upcomingDetail { display: none; margin-top: 30px; }
-
-    /* Jobs */
-    #jobList {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px; list-style: none; padding: 0; margin-top: 20px;
-    }
-    .job-item {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      padding: 20px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .job-item:hover { transform: translateY(-5px); }
-    .job-title { font-size: 1.2rem; font-weight: 500; margin-bottom: 10px; color: var(--primary); }
-    .job-desc { margin-bottom: 10px; opacity: 0.9; }
-    .job-detail {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; box-shadow: var(--shadow);
-      padding: 20px; margin-top: 20px;
-    }
-    .job-detail h2 { color: var(--primary); margin-bottom: 10px; }
-    .job-detail ul { list-style: none; margin: 10px 0; padding: 0; }
-    .job-detail ul li {
-      margin: 5px 0; padding-left: 15px; position: relative;
-    }
-    .job-detail ul li::before {
-      content: "•"; position: absolute; left: 0; color: var(--primary);
-    }
-    .tos-section, .quiz-section, .result-section {
-      margin-top: 20px; background: #222; border-radius: 8px; padding: 15px;
-    }
-    .tos-section label {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer;
-    }
-    .tos-section p { font-size: 0.9rem; line-height: 1.4; opacity: 0.9; }
-    .quiz-question { margin-top: 10px; font-weight: 500; }
-    .quiz-options { margin-top: 10px; }
-    .quiz-options button {
-      display: block; background: #333; border: none; border-radius: 6px;
-      padding: 10px; color: #fff; margin: 6px 0; width: 100%; text-align: left;
-      cursor: pointer; transition: var(--transition);
-    }
-    .quiz-options button:hover { background: #444; }
-    .quiz-options button:disabled {
-      opacity: 0.6; cursor: not-allowed;
-    }
-    .result-section {
-      margin-top: 20px; padding: 15px; background: #111;
-      border: 1px solid #444; border-radius: 6px;
-    }
-    .discord-link { color: #0f9; font-weight: 600; text-decoration: underline; }
-
-    /* Back to Top */
-    .back-to-top {
-      position: fixed; bottom: 30px; right: 30px;
-      background: var(--primary); color: #fff;
-      padding: 10px 15px; border-radius: 50%;
-      cursor: pointer; box-shadow: var(--shadow);
-      transition: var(--transition); z-index: 1200;
-    }
-    .back-to-top:hover {
-      background: var(--primary-dark);
-      transform: scale(1.1);
-    }
-
-    @media (max-width: 1000px) {
-      #updateList, #upcomingList {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      }
-    }
-    @media (max-width: 600px) {
-      .update-image, .upcoming-image { height: 150px; }
-      .update-title, .upcoming-title { font-size: 1rem; }
-      .update-hero { height: 250px; }
-      .update-hero-overlay h1 { font-size: 1.8rem; }
-      .back-button { font-size: 1.5rem; top: 10px; left: 10px; }
-      .three-col-list {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      }
-    }
-
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background: var(--background);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-    a { text-decoration: none; color: inherit; }
-
-    /* Header & Nav */
-    header {
-      position: sticky; top: 0; z-index: 1000;
-      background: var(--card-bg);
-      box-shadow: var(--shadow);
-    }
-    .nav-container {
-      max-width: var(--max-width); margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; height: var(--nav-height);
-    }
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
-    .logo {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 1rem;
-      transition: var(--transition);
-      box-shadow: var(--shadow);
-
-}
-.logotwo {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: var(--transition);
-  box-shadow: var(--shadow);
-  text-align: center;
-      
-
-}
-
-
-
-
-
-
-    nav {
-      display: flex; gap: 15px;
-    }
-    .nav-button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: var(--transition);
-      box-shadow: var(--shadow);
-    }
-    .nav-button:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
-
-    /* Container & Sections */
-    .container {
-      max-width: var(--max-width);
-      margin: 80px auto 40px auto;
-      padding: 0 20px;
-    }
-    .section { display: none; }
-    .section.active { display: block; }
-
-    /* Updates: 3-column grid */
-    #updateList {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(280px, 1fr));
-      gap: 20px;
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-    .update-item {
-      background: #1c1c1c;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .update-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
-    }
-    .update-image {
-      height: 200px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
-    .update-image::after {
-      content: "";
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 50px;
-      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-    }
-    .update-title {
-      padding: 20px;
-      font-size: 1.4rem;
-      font-weight: 600;
-      text-align: center;
-      background: #2c2c2c;
-      color: #fff;
-    }
-    #updateDetail { margin-top: 30px; display: none; }
-
-    /* Update Detail Hero */
-    .update-hero {
-      position: relative;
-      background-size: cover;
-      background-position: center;
-      border-radius: 16px;
-      height: 400px;
-      margin-top: 20px;
-    }
-    .update-hero-overlay {
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.55);
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      text-align: center; color: #fff; padding: 20px;
-    }
-    .update-hero-overlay h1 {
-      font-size: 2.8rem;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-    }
-    .back-button {
-      position: absolute; top: 20px; left: 20px;
-      background: none; border: none; color: #fff;
-      font-size: 2rem; cursor: pointer; z-index: 9999;
-      border-radius: 10px;
-    }
-    .back-button:hover {      background: var(--primary);
-      transform: scale(1.1);}
-
-    /* Section Block for each header + content in update detail */
-    .section-block {
-      background-color: rgba(255,255,255,0.05);
-      padding: 25px;
-      margin: 25px 0;
-      border-radius: 12px;
-    }
-    .section-block h2 {
-      margin-bottom: 1rem;
-      font-size: 1.6rem;
-      font-weight: 600;
-    }
-    .three-col-list {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      list-style: none;
-      padding: 0;
-      margin: 1rem 0;
-    }
-    .three-col-list li {
-      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      padding: 12px 16px; color: #fff; font-size: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      text-align: center; position: relative;
-      cursor: pointer;
-    }
-    .three-col-list li::before {
-      content: "✦";
-      font-size: 1.2rem;
-      margin-right: 8px;
-      color: #fff;
-      position: static;
-    }
-    .three-col-list li:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.6);
-    }
-
-    /* Upcoming */
-    #upcomingList {
-      list-style: none; padding: 0; margin-top: 20px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(280px, 1fr));
-      gap: 20px;
-    }
-    .upcoming-item {
-      background: #1c1c1c;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .upcoming-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
-    }
-    .upcoming-timer {
-      display: block;
-      width: fit-content;
-      margin: 10px auto 20px auto;
-      padding: 8px 16px;
-      font-size: 1.1rem;
-      background: linear-gradient(45deg, #444, #222);
-      color: #fff;
-      border-radius: 30px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      text-align: center;
-    }
-
-    /* Apply to Work */
-    #jobList {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-    .job-item {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      padding: 20px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .job-item:hover { transform: translateY(-5px); }
-    .job-title { font-size: 1.2rem; font-weight: 500; margin-bottom: 10px; color: var(--primary); }
-    .job-desc { margin-bottom: 10px; opacity: 0.9; }
-    .job-detail {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      padding: 20px;
-      margin-top: 20px;
-    }
-    .job-detail h2 { color: var(--primary); margin-bottom: 10px; }
-    .job-detail ul {
-      list-style: none;
-      margin: 10px 0;
-      padding: 0;
-    }
-    .job-detail ul li {
-      margin: 5px 0;
-      padding-left: 15px;
-      position: relative;
-    }
-    .job-detail ul li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      color: var(--primary);
-    }
-    .tos-section, .quiz-section, .result-section {
-      margin-top: 20px; background: #222; border-radius: 8px; padding: 15px;
-    }
-    .tos-section label {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer;
-    }
-    .tos-section p { font-size: 0.9rem; line-height: 1.4; opacity: 0.9; }
-    .quiz-question { margin-top: 10px; font-weight: 500; }
-    .quiz-options { margin-top: 10px; }
-    .quiz-options button {
-      display: block; background: #333; border: none; border-radius: 6px;
-      padding: 10px; color: #fff; margin: 6px 0; width: 100%; text-align: left;
-      cursor: pointer; transition: var(--transition);
-    }
-    .quiz-options button:hover { background: #444; }
-    .quiz-options button:disabled {
-      opacity: 0.6; cursor: not-allowed;
-    }
-    .result-section {
-      margin-top: 20px; padding: 15px; background: #111;
-      border: 1px solid #444; border-radius: 6px;
-    }
-    .discord-link { color: #0f9; font-weight: 600; text-decoration: underline; }
-
-    /* "Back to Top" */
-    .back-to-top {
-      position: fixed;
-      bottom: 30px; right: 30px;
-      background: var(--primary);
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-      z-index: 1200;
-    }
-    .back-to-top:hover {
-      background: var(--primary-dark);
-      transform: scale(1.1);
-    }
-
-    /* Modal Popup */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1500;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.7);
-    }
-    .modal-content {
-      background-color: #2c2c2c;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 500px;
-      border-radius: 10px;
-      text-align: center;
-    }
-    /* All popup images will be the same fixed size */
-    .modal-content img {
-      width: 300px;
-      height: 300px;
-      object-fit: cover;
-      margin-bottom: 15px;
-    }
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close:hover,
-    .close:focus {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    /* Responsive */
-    @media (max-width: 1000px) {
-      #updateList, #upcomingList {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      }
-    }
-    @media (max-width: 600px) {
-      .update-image { height: 150px; }
-      .update-title { font-size: 1rem; }
-      .update-hero { height: 250px; }
-      .update-hero-overlay h1 { font-size: 1.8rem; }
-      .back-button { font-size: 1.5rem; top: 10px; left: 10px; }
-      .three-col-list {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      }
-    }
-
-    /*TIMER*/
-
-    
-
-
-  </style>
+  /* ——— Table ——— */
+  .panel.glass{padding:0; overflow:hidden}
+  .head{padding:14px 16px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:center; justify-content:space-between}
+  .muted{color:var(--muted)}
+  .table-wrap{overflow:auto}
+  table{width:100%; border-collapse:collapse; min-width:640px}
+  thead th{
+    text-align:left; font-size:12px; color:var(--muted); padding:12px 16px;
+    position:sticky; top:0; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+    letter-spacing:.06em; text-transform:uppercase;
+  }
+  tbody td{padding:14px 16px; border-top:1px solid var(--line)}
+  tbody tr{transition: background .2s}
+  tbody tr:hover{background:rgba(255,255,255,.04)}
+  .rank{width:80px; font-variant-numeric: tabular-nums}
+  .num{font-variant-numeric: tabular-nums; text-align:right; font-weight:700}
+  footer{margin:18px 0 8px; text-align:center; color:var(--muted); font-size:12px}
+</style>
 </head>
 <body>
-  <header>
-    <div class="nav-container">
-      <div class="logo"><b>Powerd By Endgame Entertainments</b></div>
-      <nav>
-        <button class="nav-button" onclick="showSection('updatesSection')">Updates</button>
-        <button class="nav-button" onclick="showSection('upcomingSection')">Upcoming</button>
-        <button class="nav-button" onclick="showSection('jobsSection')">Apply to Work</button>
-        <button class="nav-button" onclick="window.location.href='s.html'">System</button>
-        <button class="nav-button" onclick="window.location.href='https://forms.gle/RzbMwy5tz7EJE1N3A'">Survays</button>
-      </nav>
-    </div>
-  </header>
+  <!-- Background blobs -->
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
 
-  <div id="timer-container">
-    <span id="countdown"></span>
-</div>
-
-  <div class="container">
-    <!-- Updates Section -->
-    <div id="updatesSection" class="section active">
-      <h1>Updates</h1>
-      <ul id="updateList"></ul>
-      <div id="updateDetail"></div>
+  <div class="wrap">
+    <!-- Minimal layout (no big page title) -->
+    <div class="bar">
+      <div class="pill">
+        <span>🔎</span>
+        <input id="search" placeholder="Search username…" />
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="lbl">Players</div><div class="val" id="sPlayers">0</div></div>
+        <div class="stat"><div class="lbl">Total Points</div><div class="val" id="sTotal">0</div></div>
+        <div class="stat"><div class="lbl">Top Player</div><div class="val" id="sTop">—</div></div>
+        <div class="stat"><div class="lbl">Last Updated</div><div class="val" id="sUpdated">—</div></div>
+      </div>
     </div>
 
-    <!-- Upcoming Section -->
-    <div id="upcomingSection" class="section">
-      <h1>Upcoming</h1>
-      <ul id="upcomingList"></ul>
-      <div id="upcomingDetail"></div>
-    </div>
+    <section class="panel glass">
+      <div class="head">
+        <div class="muted">Leaderboard</div>
+        <div class="muted">PRO TIP: Daily Quests Give You Extra Points</div>
+      </div>
+      <div class="table-wrap">
+        <table aria-label="Leaderboard">
+          <thead>
+            <tr>
+              <th class="rank">Rank</th>
+              <th>Username</th>
+              <th class="num">Points</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <!-- Jobs Section -->
-    <div id="jobsSection" class="section">
-      <h1>Available Jobs</h1>
-      <ul id="jobList"></ul>
-      <div id="jobDetailContainer"></div>
-    </div>
+    <footer>Mini Box PvP</footer>
   </div>
 
-  <div class="back-to-top" onclick="scrollToTop()">↑</div>
+<script>
+/* ===================== EDIT YOUR DATA HERE ===================== */
+/*
+  Enter a SPECIFIC date + time for each player (local time).
+  Accepted formats for each player's `updated` (examples):
+    "2025-08-15 21:05:00"   (recommended — local time)
+    "2025-08-15T21:05:00"   (ISO without timezone — treated as local)
+    A JS Date or timestamp (ms) also works, but strings above are easiest.
 
-  <b><div class="logotwo">© [2025] [Endgame Entertainments]</div></b>
+  The site will show "x mins ago / hours ago / days ago" based on that timestamp.
+  The header "Last Updated" shows the most recent player timestamp.
+*/
+const DATA = {
+  players: [
+    { name: "200IQ ACEツ",    points: 8, updated: "2025-08-16 22:10:00" },
+    { name: "Dropxyツ",    points: 20, updated: "2025-08-16 22:10:00" },
+    { name: "graphic_showing", points: 9, updated: "2025-08-16 22:10:00" },
+    { name: "Yassine-2508",   points: 4, updated: "2025-08-16 22:10:00" },
+    { name: "RealisticElk3877",   points: 10, updated: "2025-08-16 22:10:00" },
+    { name: "kabil100098",   points: 2, updated: "2025-08-16 22:10:00" },
+    { name: "vultureZozz",   points: 1, updated: "2025-08-16 22:10:00" },
+    { name: "friable-pager45",   points: 1, updated: "2025-08-16 22:10:00" },
 
-  <script>
 
-    
-    /* Navigation */
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      scrollToTop();
-    }
-    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-    /* Updates Data */
-    const updates = {
-      update14: {
-  title: 'Season 5 - Lootpool Update',
-  sections: [
-    {
-      header: "New Items:",
-      content: "Charge Shotgun",
-      content2: "Ranger AR",
-      content3: "Slap Splash",
-      content4: "Shadow Bomb",
-    },
-    {
-      header: "Adjustments:",
-      content: "Zone Is Now Fully Random",
-      content2: "Truck Now Drops More Loot"
-    },
+  ]
+};
+/* =============================================================== */
 
-  ],
-  image: 'update69.png'
-},
-      update13: {
-  title: 'Season 5 - Season Update',
-  sections: [
-  {
-      header: "Curent Guns:",
-      content: "Collateral Damage AR",
-      content2: "Tactical Shotgun",
-      content3: "Maven Shotgun",
-      content4: "Pump Shotgun",
-      content5: "Thunder Pump Shotgun",
-      content6: "Mammoth Pistol",
-      content7: "Vaild Presigin SMG",
-      content8: "Holo Twister",
-      content9: "Hunting Rifle",
-      content10: "Tactical AR",
-      content11: "Assault Rifle [Epic And Legendary]",
-      content12: "Twin Mag AR",
-      content13: "Sub mashing Gun",
-    },
-    {
-      header: "Current Heals:",
-      content: "Med Kit",
-      content2: "Big Pot",
-      content3: "Slurp Fish",
-      content4: "Mid Mist ",
-      content5: "Mini’s",
-      content6: "Slap Juice",
-    },
-    {
-      header: "Current Items:",
-      content: "Grappler",
-      content2: "LunchPad",
-      content3: "CrashPad",
-      content4: "Mid Mist ",
-      content5: "Oni Mask",
-      content6: "Shockwaves",
-    },
-    {
-      header: "Current Special Items:",
-      content: "Zapitron",
-      content2: "The Ultimate Blade",
-    },
-    {
-      header: "The Ultimate Blade:",
-      content: "Basic Attack",
-      content2: "Block Attack",
-      content3: "Drill Attack",
-      content4: "Sprint Attack",
-      content5: "Extra Sprint",
-    },
-    {
-      header: "New Features:",
-      content: "Armored Van: Spawns Around The Map, Interact with its vault and in just 10 seconds would bring to you 2 Epic Rariety Guns 1 Heal And 1 Mobility",
-      content2: "The Ultimate Blade: Has a 1/150 Chance of finding in a chest ",
-    },
-    {
-      header: "Mythics:",
-      content: "Mythic Mini Gun",
-      content2: "Mythic Drum Gun",
-      content3: "Mythic Jules Grapler",
-      content4: "Mythic Oni Mask",
-      content5: "Mythic Gold Fish",
-      content6: "Exotic Twin Mag",
-      content7: "Exotic Sub Machine Gun",
-      content8: "Exotic Maven Shotgun",
-    },
-    {
-      header: "New Map:",
-      content: "Jungle Baiome",
-      content2: "Jungle Baiome"
-    },
-    {
-      header: "New POI's:",
-      content: "Fencing Hills",
-      content2: "Western Woods Dojo",
-      content3: "Burd Stations",
-      content7: "Lucky Hills",
-      content4: "Dojo Tower A",
-      content5: "Dojo Tower B",
-      content6: "Dojo Tower C",
+const $ = (q) => document.querySelector(q);
+const fmt = (n) => new Intl.NumberFormat().format(n);
 
-    }
-  ],
-  image: 'season5.png'
-},
-      update12: {
-  title: 'Duos Launch',
-  sections: [
-  {
-      header: "Duos:",
-      content: "Duos Mode Is Rampage Battle Royal, but with teams of two.",
+let searchQ = '';
+let resolved = null;
 
-    },
-    {
-      header: "Map Changes:",
-      content: "Added Grind Rails For Easy Mobility",
-      content2: "Added More Chests Around The Map",
-    },
-    {
-      header: "New Items:",
-      content: "Assult Rifle (Scar)",
-      content2: "Havoc Shotgun",
-      content3: "Void Oni Mask",
-    },
-    {
-      header: "New Mythics:",
-      content: "Mythic Gold Fish",
-      content2: "Mythic Jules Grapler",
-      content3: "Mythic Void Oni Mask",
-    },
-    {
-      header: "Adjustments:",
-      content: "Mythics Are Now Easyier To Find",
-      content1: "Better Loot",
-      content2: "Removed Boss's",
-    },
-  ],
-  image: 'imagesmm.jpeg'
-},
-      update11: {
-  title: 'Season 4 - Lootpool Update',
-  sections: [
-    {
-      header: "Bug Fixes:",
-      content: "Fixed Supply Drop Bug",
-      content2: "Fixed Preformence Issues"
-    },
-    {
-      header: "Map Changes:",
-      content: "Improved Map",
-      content2: "Added More Chests Around The Map",
-      content3: "Map Changes",
-      content4: "Added Ziplines"
-    },
-    {
-      header: "New Items:",
-      content: "Added Stinger SMG",
-      content2: "Chug Splashes"
-    },
-    {
-      header: "New Features:",
-      content: "Medallion",
-      content2: "Bosses"
-    },
-    {
-      header: "Medalions:",
-      content: "Paradise Palms: Gives You Extra Damage",
-      content2: "Nitro Factory: Gives You Nitro Every 30 Seconds"
-    },
-    {
-      header: "Bosses:",
-      content: "Paradise Palms: Farid",
-      content2: "Nitro Factory: Chaios Agent"
-    },
-    {
-      header: "New Boss:",
-      content: "New boss at Paradise Palms that drops the Medallion",
-      content2: "New boss at Paradise Palms that drops the Medallion"
-    }
-  ],
-  image: 'mnm.png'
-},
+init();
 
-      update10: {
-  title: 'Season 4- Season Update',
-  sections: [
-  {
-      header: "New:",
-      content: "Pulse Rifle",
-      content2: "Combat SMG",
-      content3: "Combat Shotgun",
-      content4: "Tactical Shotgun",
-      content5: "Boom Bolt",
-      content6: "Mammoth Pistol",
-      content7: "Heavy Impact Sniper",
-      content8: "Holo Twister",
-      content9: "Rocket Drill",
-      content10: "Nitro",
-      content11: "Grapler",
-      content12: "FlowBarry Fizz",
-      content13: "Slurp Fish",
-      content14: "Mid-Mist"
-    },
-    {
-      header: "Vaulted:",
-      content: "Striker AR",
-      content2: "Ranger AR",
-      content3: "Gatekeeper",
-      content4: "Ranger Shotgun",
-      content5: "Suppressed Pistol",
-      content6: "Falcon Eye Sniper",
-      content7: "Gold Chung Splash",
-      content8: "Med-Mist Smoke Grenade",
-      content9: "Thermite",
-      content10: "Kneecapped",
-      content11: "Shockwave hammer",
-      content12: "Grapple Blade",
-      content13: "Shield Keg",
-      content14: "Chug Jug"
-    },
-    {
-      header: "Current Lootpool:",
-      content: "Pulse Rifle",
-      content2: "Combat SMG",
-      content3: "Combat Shotgun",
-      content4: "Tactical Shotgun",
-      content5: "Boom Bolt",
-      content6: "Mammoth Pistol",
-      content7: "Heavy Impact Sniper",
-      content8: "Holo Twister",
-      content9: "Hammer AR",
-      content10: "Rocket Drill",
-      content11: "Mini’s",
-      content12: "Big-Pots",
-      content13: "Medkit",
-      content14: "Crashpad JR",
-      content15: "Shockwaves",
-      content16: "Nitro",
-      content17: "Grapler",
-      content18: "FlowBarry Fizz",
-      content19: "Slurp Fish",
-      content20: "Mid-Mist"
-    },
+function init(){
+  $('#search').addEventListener('input', e => { searchQ = e.target.value.toLowerCase().trim(); render(); });
+  resolved = normalizeData(DATA);   // parse all timestamps ONCE
+  render();
+  setInterval(updateTimeLabels, 5000); // keep “x mins ago” ticking
+}
 
-    {
-      header: "New Features:",
-      content: "Double Pump",
-      content2: "999 Materials",
-      content3: "Mythics in Chests",
-      content4: "Vending Mations",
-      content5: "Cactus",
-      content6: "Fishing"
-    },
-    {
-      header: "Mythics:",
-      content: "Minion",
-      content2: "Drumlin",
-      content3: "Assault Rifle",
-      content4: "Grapler",
-      content5: "Pulse Rifle"
-    },
-    {
-      header: "New Map:",
-      content: "Desert Map"
-    },
-    {
-      header: "New POI's:",
-      content: "Paradise Palms",
-      content2: "Rebuilt Hotel",
-      content3: "Nitro Gas",
-      content4: "Nitro Factory",
-      content5: "The Station",
-      content6: "Western Town",
-      content7: "Woodland House"
-    }
-  ],
-  image: 'fn.jpg'
-},
+/* ---------- Parse "YYYY-MM-DD HH:MM[:SS]" or "YYYY-MM-DDTHH:MM[:SS]" as LOCAL time ---------- */
+function parseStampLocal(s){
+  if (s == null) return null;
+  if (typeof s === 'number') return s;
+  if (s instanceof Date) return s.getTime();
+  s = String(s).trim();
 
-      update9: {
-        title: 'Season 3 - Season Update',
-        sections: [
-          { header: "New Guns/Items:", content: "Striker AR", content2: "Hamer AR", content3: "Gatekeeper Shotgun", content4: "Ranger Shotgun", content5: "Combat SMG", content6: "Falcon Eye Sniper", content7: "Kneecapped", content8: "Shockwave hammer" },
-          { header: "Vaulted Guns:", content: "Havoc Suppressed AR", content2: "Collateral Damage Assault Rifle", content3: "Thunder Shotgun", content4: "Maven Shotgun", content5: "Twin Mag SMG", content6: "Mammoth Pistol", content7: "Ranger Pistol", content8: "Slurp", content9: "Flowbary Fizz", content10: "Grappler", content11: "Rocket Ram", content12: "Smock Grande", content13: "Pulse Scanner",},
-          { header: "Current Lootpoll:", content: "Ranger AR", content1: "Striker AR", content100: "Hamer AR", content2: "Pump Shotgun", content3: "Gatekeeper Shotgun", content4: "Ranger Shotgun", content11: "Combat SMG", content12: "Suppressed Pistol", content5: "Falcon Eye Sniper", content13: "Big Pot", content14: "Mini's", content6: "Medkit", content15: "Chug Jug", content7: "Gold Chung Splash", content8: "Med-Mist Smoke Grenade", content9: "Thermite", content16: "Kneecapped", content10: "Shockwave hammer", content17: "Grapple Blade", content18: "Crashpad JR", content18: "Shockwaves", content19: "Shield Keg",},
-          { header: "New POI's:", content: "Starfall Crater", content2: "Pipeline Pit", ontent3: "Rusted Agency",},
-          { header: "Vaulted POI's:", content: "Shipment X", content2: "Jungle Base" },
-          { header: "New Systems:", content: "Shop System: After 90 Seconds after the game has started a shop will open that will contain Good Loot That you can purchase for Gold or Diamonds", content2: "Gold System: When Opening a Chest, Supply Drop, Lama, or Bomb you will have a chance of geting gold witch can be spent at the shop", content3:"Story System: Track your story quests for live events and other cool stuff", content4: ""  },
-          { header: "New Cars:", content: "Dirt Bike", content2: "Sports Car",},
-          { header: "Shop Contains:", content: "Mythic Shockwave Hammer", content2: "Legendary Striker AR", content3: "Legendary Falcon Eye Sniper" }
-        ],
-        image: 'theend.jpg'
-      },
-      update8: {
-        title: 'Season 2 - XP Update',
-        sections: [
-           {header: "Bug Fixes:", content: "Name Tag Bug",content2: "Flag Bug",content3: "Rift Point Bug Where you get loot early",},
-        ],
-        image: 'rxp.png'
-      },
-      update6: {
-        title: 'Season 2 - Content Update',
-        sections: [
-           {header: "New Fetures:", content: "New Vault System: Search Cheasts and Find Thermite, Throw The Thermite At the Vault to Start The Robbary System, Damage the weak spots ont he Vault to Open it", content2: "Ballistic System: Search Cheasts for an Ultra Rare Bomb From Ballistic, Search for a Flag Around The Map to Place your Bomb, if you wait for over 30 Seconds and no one comes to Clear Out The Bomb, You get Exotic/Mythic Loot, Watch out and dont get so close to the bomb or ealse you will take 100 Damage",},
-           {header: "New Items:", content: "Thermite", content2: "Mythic Mammoth Pistol", content3: "Mythic Collateral Damage Assault Rifle", content4: "Mythic Suppressed Pistol", content5: "Exotic Twin Mag SMG", content6: "Exotic Mavaen Shotgun",},
-        ],
-        image: 'ballistic.png'
-      },
-      update5: {
-        title: 'Season 2 -  Lootpool Update',
-        sections: [
-           {header: "New Guns/Items:", content: "Collateral Damage Assault Rifle", content2: "Suppressed Pistol",content3: "Gold Splash", content4: "Med-Mist Smoke Grenade", content5: "Pulse Scanner",},
-        ],
-        image: 'lootpoolupdate.png'
-      },
-      update4: {
-        title: 'Season 2 - Bug Fixes',
-        sections: [
-           {header: "Bug Fixes:", content: "Vault Bug", content2: "Amo Create Bug",content2: "Name Tag Bug" },
-        ],
-        image: 'bugfix.png'
-      },
-      update3: {
-        title: 'Season 2 - Season Update',
-        sections: [
-          { header: "New Guns/Items:", content: "Ranger AR", content2: "Havoc Suppressed AR", content3: "Thunder Shotgun", content4: "Maven Shotgun", content5: "Ranger Pistol", content6: "Slurp", content7: "Grapple Blade", content8: "Grapler", content9: "Rocket Ram", content10: "Smock Grande" },
-          { header: "Vaulted Guns:", content: "Nemesis AR", content2: "Combat AR", content3: "Charge Shotgun", content4: "Rail Gun", content5: "Blade", content6: "Rift", content7: "Flowbary", content8: "Remote Explosive", content9: "Impulse Grenade", content10: "Lunch Pad" },
-          { header: "Current Lootpoll:", content: "Ranger AR", content2: "Pump Shotgun", content3: "Thunder Shotgun", content4: "Maven Shotgun", content11: "Twin Mag SMG", content12: "Mammoth Pistol", content5: "Ranger Pistol", content13: "Big Pot", content14: "Mini's", content6: "Slurp", content15: "Flowbary Fizz", content7: "Grapple Blade", content8: "Grapler", content9: "Rocket Ram", content16: "Shockwave", content10: "Smock Grande", content17: "Crash-Pad JR" },
-          { header: "New POI's:", content: "Shipment X", content2: "Light House", content3: "Sniper House" },
-          { header: "Vaulted POI's:", content: "Castle X", content2: "Slapy Gas" },
-          { header: "New Systems:", content: "New Supply Drops System", content2: "New Lama System" },
-          { header: "New Bosses:", content: "The Car Worker Boss - Mythic Havoc AR", content2: "The Shipment X Boss - Mythic Ranger AR - Vault Key Card" },
-          { header: "Vault Contains:", content: "7 Normal Chests", content2: "1 Lama" },
-          { header: "Supply Drop Contains:", content: "50% Rare Gun", content2: "35% Epic Gun", content3: "15% Legendary Gun", content4: "100% Healing Item", content5: "100% Mobility Item", content6: "200 Wood, Brick, Metal" }
-        ],
-        image: 'starfall.png'
-      },
-      update2: {
-        title: 'Season 1 - Lootpool Update',
-        sections: [
-          { header: "New Guns/Items:", content: "Impulse Grenade", content2: "Mammoth Pistol", content3: "Crash-pad JR", content4: "Remote Explosive" },
-          { header: "Nerfed:", content: "Rail Gun | 5% chance to 3% chance", content2: "Big Pot | 17.5% chance to 14% chance", content3: "Mini's | 17.5% chance to 14% chance", content4: "Flowbary | 17.5% chance to 14% chance", content5: "Flowbary Fizz | 17.5% chance to 14% chance", content6: "Blade | 17.5% chance to 10% chance" },
-          { header: "Chance:", content: "Mammoth Pistol | 3% chance Epic", content2: "Mammoth Pistol | 1% chance Legendary" }
-        ],
-        image: 'update1.png'
-      },
-      update1: {
-        title: 'Season 1 - Game Launch',
-        sections: [
-          { header: "New Guns/Items:", content: "Combat AR", content2: "Nemesis AR", content3: "Charge Shotgun", content4: "Pump Shotgun", content5: "Rail Gun", content6: "Twin Mag SMG", content7: "Big Pot", content8: "Mini's", content9: "Flowbary", content10: "Flowbary Fizz", content11: "Blade", content12: "Lunch Pad", content13: "Rift", content14: "Shockwave" },
-          { header: "New POI's:", content: "Slapy Gas", content2: "Broken Hotel", content3: "Mini Corol Castle", content4: "Tilted Clock", content5: "Jungle Base", content6: "Ruined Reals", content7: "Castle X" },
-          { header: "New Bosses:", content: "Ghost Boss: Mythic Charge Shotgun - Mythic Nemesis AR" }
-        ],
-        image: 'm.png'
-      }
-    };
+  // "YYYY-MM-DD HH:MM[:SS]" or "YYYY-MM-DDTHH:MM[:SS]"
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (m) {
+    const Y  = +m[1], Mo = +m[2], D  = +m[3],
+          H  = +m[4], Mi = +m[5], S  = +(m[6]||0);
+    return new Date(Y, Mo-1, D, H, Mi, S, 0).getTime(); // LOCAL time
+  }
 
-    function injectUpdates(){
-      const ul = document.getElementById('updateList');
-      ul.innerHTML = '';
-      for (let key in updates) {
-        const u = updates[key];
-        const li = document.createElement('li');
-        li.className = 'update-item';
-        li.onclick = () => showUpdateDetail(key);
-        const img = document.createElement('div');
-        img.className = 'update-image';
-        img.style.backgroundImage = `url('${u.image}')`;
-        const title = document.createElement('div');
-        title.className = 'update-title';
-        title.textContent = u.title;
-        li.appendChild(img);
-        li.appendChild(title);
-        ul.appendChild(li);
-      }
-    }
-    function showUpdateDetail(key){
-      const u = updates[key];
-      let html = `
-        <div class="update-hero" style="background-image:url('${u.image}')">
-          <button class="back-button" onclick="hideUpdateDetail()">←</button>
-          <div class="update-hero-overlay"><h1>${u.title}</h1></div>
-        </div>
-      `;
-      u.sections.forEach(sec=>{
-        html += `<div class="section-block">
-          <h2>${sec.header}</h2>`;
-        const c = Object.keys(sec).filter(k=>k.startsWith('content'));
-        if (c.length>1){
-          html += `<ul class="three-col-list">`;
-          c.forEach(k=> html+=`<li>${sec[k]}</li>`);
-          html += `</ul>`;
-        } else {
-          html += `<p>${sec[c[0]]}</p>`;
-        }
-        html += `</div>`;
-      });
-      const det = document.getElementById('updateDetail');
-      det.innerHTML = html;
-      det.style.display='block';
-      document.getElementById('updateList').style.display='grid';
-      document.getElementById('updateList').style.display='none';
-      scrollToTop();
-    }
-    function hideUpdateDetail(){
-      document.getElementById('updateDetail').style.display='none';
-      document.getElementById('updateList').style.display='grid';
-      scrollToTop();
-    }
+  // Fallback: let the browser parse (handles full ISO with timezone like 2025-08-16T09:00:00Z)
+  const t = Date.parse(s);
+  return Number.isNaN(t) ? null : t;
+}
 
-    /* Upcoming Data */
-    const upcomingData = [
-      {
-        id:'u1',
-        title:'Season 6 - Season Update',
-        description:'Comming Soon Awakes Darkness..',
-        image:'season5.png',
-        releaseDate:'2025-06-26T12:00:00Z'
-      },
-      {
-        id:'u2',
-        title:'Season 5 - Live Event',
-        description:'Comming Soon Awakes Darkness..',
-        image:'season5.png',
-        releaseDate:'2025-06-25T20:00:00Z'
-      },
-    ];
-    function injectUpcoming(){
-      const ul = document.getElementById('upcomingList');
-      ul.innerHTML='';
-      upcomingData.forEach(u=>{
-        const li = document.createElement('li');
-        li.className='upcoming-item';
-        li.onclick = () => showUpcomingDetail(u.id);
-        const img = document.createElement('div');
-        img.className='upcoming-image';
-        img.style.backgroundImage = `url('${u.image}')`;
-        const title = document.createElement('div');
-        title.className='upcoming-title';
-        title.textContent = u.title;
-        const timer = document.createElement('p');
-        timer.className='upcoming-timer';
-        timer.setAttribute('data-release',u.releaseDate);
-        timer.textContent='Loading timer...';
-        li.appendChild(img);
-        li.appendChild(title);
-        li.appendChild(timer);
-        ul.appendChild(li);
-      });
-    }
-    function showUpcomingDetail(id){
-      const u = upcomingData.find(x=>x.id===id);
-      let html = `
-        <div style="position:relative;margin-top:20px;">
-          <button class="back-button" onclick="hideUpcomingDetail()">←</button>
-          <img src="${u.image}" alt="${u.title}" style="width:100%;border-radius:12px;">
-          <div style="padding:20px;background:var(--card-bg);border-radius:0 0 12px 12px;box-shadow:var(--shadow);">
-            <h2>${u.title}</h2>
-            <p>${u.description}</p>
-            <p class="upcoming-timer" data-release="${u.releaseDate}">Loading timer...</p>
-          </div>
-        </div>
-      `;
-      const det = document.getElementById('upcomingDetail');
-      det.innerHTML = html;
-      det.style.display='block';
-      document.getElementById('upcomingList').style.display='none';
-      scrollToTop();
-    }
-    function hideUpcomingDetail(){
-      document.getElementById('upcomingDetail').style.display='none';
-      document.getElementById('upcomingList').style.display='grid';
-      scrollToTop();
-    }
-    function updateCountdowns(){
-      document.querySelectorAll('.upcoming-timer').forEach(t=>{
-        const rel = new Date(t.getAttribute('data-release')).getTime();
-        const now = Date.now();
-        const diff = rel-now;
-        if(diff<=0) t.textContent='Released!';
-        else {
-          const d = Math.floor(diff/(1000*60*60*24));
-          const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-          const m = Math.floor((diff%(1000*60*60))/(1000*60));
-          const s = Math.floor((diff%(1000*60))/1000);
-          t.textContent=`${d}d ${h}h ${m}m ${s}s`;
-        }
-      });
-      setTimeout(updateCountdowns,1000);
-    }
+function normalizeData(data){
+  const players = data.players.map(p => ({
+    name: String(p.name),
+    points: Number(p.points)||0,
+    updatedMs: parseStampLocal(p.updated)
+  }));
+  return { players };
+}
 
-    /* Jobs Data */
-    const jobs = [
-      
-      {
-        id:'leadDevs',
-        title:'💡 Developer',
-        shortDesc:'Create And Manage The Game Updates',
-        responsibilities:[
-          'Supervise development projects and coordinate developers.',
-          'Ensure coding standards, quality, and deadlines are met.',
-          'Mentor developers with technical guidance.'
-        ],
-        requirements:[
-          '6+ Months in Creative 1.0 Experience.',
-          'At Least of 24 Hours Of Creative Per Week',
-          'Team management experience.'
-        ],
-        quiz:[
-          {
-            question:'What is a key responsibility of a Developer?',
-            choices:['Manage servers','Supervise projects & ensure code quality','Design maps','Moderate Discord'],
-            correctIndex:1
-          },
-          {
-            question:'Which skill is essential for a Developer?',
-            choices:['Coding only','Leadership & mentoring','Art design','Community events'],
-            correctIndex:1
-          }
-        ],
-        discordLink:'https://discord.gg/rNFZe6yERZ'
-      }
-      // Add other roles here similarly...
-    ];
-    const userAnswers = {};
+/* ---------- Render ---------- */
+function render(){
+  // Sort by points desc, then name
+  const list = resolved.players.slice()
+    .sort((a,b)=> (b.points - a.points) || a.name.localeCompare(b.name));
 
-    function injectJobs(){
-      const ul = document.getElementById('jobList');
-      ul.innerHTML='';
-      jobs.forEach(j=>{
-        const li = document.createElement('li');
-        li.className='job-item';
-        li.onclick = ()=>showJobDetail(j.id);
-        const t = document.createElement('div');
-        t.className='job-title'; t.textContent=j.title;
-        const d = document.createElement('div');
-        d.className='job-desc'; d.textContent=j.shortDesc;
-        li.appendChild(t); li.appendChild(d);
-        ul.appendChild(li);
-      });
-    }
-    function showJobDetail(id){
-      const job = jobs.find(x=>x.id===id);
-      if(!job) return;
-      const cont = document.getElementById('jobDetailContainer');
-      const failKey = `failCooldown_${id}`;
-      const failTs = localStorage.getItem(failKey);
-      let locked=false, lockedMsg='';
-      if(failTs && Date.now()<parseInt(failTs,10)){
-        const diff=parseInt(failTs,10)-Date.now();
-        const d=Math.floor(diff/(1000*60*60*24)), h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-        locked=true; lockedMsg=`Reapply in ${d}d ${h}h.`;
-      }
-      let html = `<div class="job-detail"><h2>${job.title}</h2>
-        <strong>Responsibilities:</strong>
-        <ul>${job.responsibilities.map(r=>`<li>${r}</li>`).join('')}</ul>
-        <strong>Requirements:</strong>
-        <ul>${job.requirements.map(r=>`<li>${r}</li>`).join('')}</ul>`;
-      if(locked){
-        html+=`<div class="result-section"><h3>Cooldown</h3><p>${lockedMsg}</p></div></div>`;
-      } else {
-        html+=`
-          <div class="tos-section">
-            <p><strong>TOS:</strong> By applying you agree to all rules.</p>
-            <label><input type="checkbox" id="tosCheck"> I agree to the TOS</label>
-            <button class="nav-button smaller" onclick="startQuiz('${id}')">I want this job</button>
-          </div>
-          <div id="quizSection" class="quiz-section" style="display:none;"></div>
-          <div id="resultSection" class="result-section" style="display:none;"></div>
-        </div>`;
-      }
-      cont.innerHTML = html;
-      scrollToTop();
-    }
-    function startQuiz(id){
-      if(!document.getElementById('tosCheck').checked){
-        return alert('Agree to TOS first.');
-      }
-      const job = jobs.find(x=>x.id===id);
-      const sec = document.getElementById('quizSection');
-      sec.style.display='block'; sec.innerHTML='';
-      job.quiz.forEach((q,qi)=>{
-        const qDiv = document.createElement('div');
-        qDiv.className='quiz-question'; qDiv.textContent=`Q${qi+1}: ${q.question}`;
-        sec.appendChild(qDiv);
-        const opts = document.createElement('div'); opts.className='quiz-options';
-        q.choices.forEach((c,ci)=>{
-          const btn = document.createElement('button');
-          btn.textContent=c;
-          btn.onclick = ()=>{
-            disableQuestionButtons(opts);
-            selectAnswer(id,qi,ci);
-          };
-          opts.appendChild(btn);
-        });
-        sec.appendChild(opts);
-      });
-    }
-    function disableQuestionButtons(container){
-      container.querySelectorAll('button').forEach(b=>{
-        b.disabled=true; b.style.opacity='0.6'; b.style.cursor='not-allowed';
-      });
-    }
-    function selectAnswer(jobId,qIdx,choiceIdx){
-      if(!userAnswers[jobId]) userAnswers[jobId]=[];
-      userAnswers[jobId][qIdx]=choiceIdx;
-      checkIfQuizComplete(jobId);
-    }
-    function checkIfQuizComplete(jobId){
-      const job = jobs.find(x=>x.id===jobId);
-      const ans = userAnswers[jobId]||[];
-      if(ans.length<job.quiz.length || ans.some(a=>a===undefined)) return;
-      const res = document.getElementById('resultSection');
-      res.style.display='block';
-      const allCorrect = job.quiz.every((q,i)=>ans[i]===q.correctIndex);
-      if(allCorrect){
-        res.innerHTML=`<h3>Passed! 🎉</h3>
-          <p><a class="discord-link" href="${job.discordLink}" target="_blank">Join Discord</a></p>`;
-      } else {
-        const failKey = `failCooldown_${jobId}`;
-        localStorage.setItem(failKey, (Date.now()+7*24*60*60*1000).toString());
-        res.innerHTML=`<h3>Failed.</h3><p>Cannot reapply for 7 days.</p>`;
-      }
-    }
+  const rankMap = new Map(list.map((p,i)=>[p.name, i+1]));
+  const filtered = list.filter(p => !searchQ || p.name.toLowerCase().includes(searchQ));
 
-    window.onload = function(){
-      showSection('updatesSection');
-      injectUpdates();
-      injectUpcoming();
-      injectJobs();
-      updateCountdowns();
-    };
-  </script>
+  // Build rows
+  const tbody = $('#tbody'); tbody.innerHTML = '';
+  filtered.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rank">#${fmt(rankMap.get(p.name) || 0)}</td>
+      <td>${escapeHtml(p.name)}</td>
+      <td class="num">${fmt(p.points || 0)}</td>
+      <td data-ms="${p.updatedMs ?? ''}"></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Stats
+  $('#sPlayers').textContent = fmt(resolved.players.length);
+  $('#sTotal').textContent   = fmt(resolved.players.reduce((s,p)=>s+(p.points||0),0));
+  $('#sTop').textContent     = list[0]?.name || '—';
+
+  const mostRecent = list.map(p=>p.updatedMs||0).reduce((a,b)=>Math.max(a,b),0);
+  $('#sUpdated').setAttribute('data-ms', mostRecent || '');
+
+  updateTimeLabels();
+}
+
+/* ---------- Live “time ago” labels ---------- */
+function updateTimeLabels(){
+  document.querySelectorAll('[data-ms]').forEach(el => {
+    const v = el.getAttribute('data-ms');
+    if (!v) { el.textContent = '—'; return; }
+    const ms = Number(v);
+    if (!Number.isFinite(ms)) { el.textContent = '—'; return; }
+    el.textContent = timeAgo(ms);
+  });
+}
+
+/* ---------- Helpers ---------- */
+function timeAgo(ms){
+  const diff = Date.now() - ms;
+  if (diff < 0) return 'just now';
+  const s = Math.floor(diff/1000);
+  if (s < 60)  return `${s} sec${s!==1?'s':''} ago`;
+  const m = Math.floor(s/60);
+  if (m < 60)  return `${m} min${m!==1?'s':''} ago`;
+  const h = Math.floor(m/60);
+  if (h < 24)  return `${h} hour${h!==1?'s':''} ago`;
+  const d = Math.floor(h/24);
+  if (d < 7)   return `${d} day${d!==1?'s':''} ago`;
+  return new Date(ms).toLocaleString();
+}
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+</script>
 </body>
 </html>
